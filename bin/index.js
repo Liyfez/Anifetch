@@ -14,10 +14,12 @@ function printHelp() {
   console.log(`
 ${c.bold("USAGE:")}
   ${c.green("anifetch")} ${c.yellow("<username>")} ${c.dim("[options]")}
+  ${c.green("anifetch fetch")} ${c.yellow("<username>")} ${c.dim("[options]")}
   ${c.green("npx anifetch")} ${c.yellow("<username>")} ${c.dim("[options]")}
 
 ${c.bold("EXAMPLES:")}
   ${c.green("anifetch <username>")}                    ${c.dim("Fetch full profile & export to JSON")}
+  ${c.green("anifetch fetch <username>")}              ${c.dim("Fetch profile using fetch command")}
   ${c.green("anifetch <username> --completed --json")} ${c.dim("Export only completed anime to JSON")}
   ${c.green("anifetch <username> --all --csv")}        ${c.dim("Export all anime to CSV spreadsheet")}
   ${c.green("anifetch <username> --dropped --txt")}    ${c.dim("Export dropped anime to plain text")}
@@ -39,7 +41,7 @@ ${c.bold("OPTIONS & FLAGS:")}
   ${c.yellow("--json-stdout")}            Output pure JSON to stdout (disables banner and file writes)
   ${c.yellow("-q, --quiet")}              Quiet mode (suppress terminal messages)
   ${c.yellow("-v, --version")}            Show version number
-  ${c.yellow("-h, --help")}               Show this help guide
+  ${c.yellow("-h, -help, --help, help")}  Show this help guide
 
 ${c.bold("SHORTHAND SWITCHES:")}
   ${c.cyan("--completed")}, ${c.cyan("--watching")}, ${c.cyan("--dropped")}, ${c.cyan("--paused")}, ${c.cyan("--planning")}, ${c.cyan("--all")}
@@ -102,6 +104,11 @@ function parseCliArgs(args) {
       options.sort = args[++i];
     } else if (arg === "--order") {
       options.order = args[++i];
+    }
+    // Subcommands: 'fetch <username>' or 'export <username>'
+    else if (arg === "fetch" || arg === "get" || arg === "export") {
+      // ignore the keyword and continue parsing username from next args
+      continue;
     }
     // Shorthand status flags
     else if (arg === "--completed") {
@@ -203,7 +210,7 @@ async function run() {
 
     if (!options.quiet) {
       if (exportedFiles.length > 0) {
-        printExportSummary(exportedFiles, options.output, username);
+        printExportSummary(exportedFiles, options.output);
       }
     }
   } catch (err) {

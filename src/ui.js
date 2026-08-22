@@ -42,7 +42,6 @@ export function printBanner() {
 
     for (let col = 0; col < line.length; col++) {
       const char = line[col];
-      // Progress t: 0.0 (top-left) to 1.0 (bottom-right)
       const t = (col / line.length) * 0.65 + (row / ASCII_BANNER.length) * 0.35;
       const r = 255;
       const g = Math.round(25 + t * 165);
@@ -56,18 +55,18 @@ export function printBanner() {
 }
 
 /**
- * Prints clean export confirmation and helpful example commands.
+ * Prints clean export confirmation and helpful example commands using generic <username>.
  */
-export function printExportSummary(exportedFiles, outputDir, username) {
+export function printExportSummary(exportedFiles, outputDir) {
   if (!exportedFiles || exportedFiles.length === 0) return;
 
   const filenames = exportedFiles.map(f => f.split(/[\\/]/).pop()).join(", ");
   console.log(`${c.green("✔")} ${c.bold("Exported to:")} ${c.yellow(outputDir)} ${c.dim(`(${filenames})`)}`);
 
   console.log(`\n${c.bold("EXAMPLES:")}`);
-  console.log(`  ${c.green("anifetch " + username + " --completed --json")}    ${c.dim("Export completed anime to JSON")}`);
-  console.log(`  ${c.green("anifetch " + username + " --all --csv")}           ${c.dim("Export all anime to spreadsheet")}`);
-  console.log(`  ${c.green("anifetch " + username + " -f all")}                ${c.dim("Export to JSON, CSV, TXT & Markdown")}`);
+  console.log(`  ${c.green("anifetch <username> --completed --json")}    ${c.dim("Export completed anime to JSON")}`);
+  console.log(`  ${c.green("anifetch <username> --all --csv")}           ${c.dim("Export all anime to spreadsheet")}`);
+  console.log(`  ${c.green("anifetch <username> -f all")}                ${c.dim("Export to JSON, CSV, TXT & Markdown")}`);
 
   console.log(`\n${c.pink("👉 Run 'anifetch --help' to see all options, filters & formats.")}\n`);
 }
