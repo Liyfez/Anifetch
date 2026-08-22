@@ -1,5 +1,5 @@
 /**
- * Terminal output renderer for anifetch: Big ASCII banner, data fetch progress & export notices.
+ * Smooth Pink Gradient Banner & Clean Output Renderer for anifetch.
  */
 
 // ANSI Color & Style Helpers (supports NO_COLOR / dumb terminals)
@@ -13,56 +13,61 @@ export const c = {
   yellow: (s) => (useColor ? `\x1b[33m${s}\x1b[0m` : String(s)),
   red: (s) => (useColor ? `\x1b[31m${s}\x1b[0m` : String(s)),
   magenta: (s) => (useColor ? `\x1b[35m${s}\x1b[0m` : String(s)),
-  blue: (s) => (useColor ? `\x1b[34m${s}\x1b[0m` : String(s))
+  pink: (s) => (useColor ? `\x1b[38;2;255;105;180m${s}\x1b[0m` : String(s))
 };
 
+const ASCII_BANNER = [
+  "   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗",
+  "  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║",
+  "  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║",
+  "  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║",
+  "  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║",
+  "  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝"
+];
+
 /**
- * Prints the big bold ANIFETCH banner.
+ * Prints the big ANIFETCH banner with a smooth pink/magenta gradient.
  */
 export function printBanner() {
-  console.log(c.cyan(`
-   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗
-  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║
-  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║
-  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║
-  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║
-  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝`));
-  console.log(c.dim(`  ⚡ AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, MD)\n`));
+  if (!useColor) {
+    console.log(ASCII_BANNER.join("\n"));
+    console.log("  Fast AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, MD)\n");
+    return;
+  }
+
+  // Render 2D smooth pink gradient (from vivid neon pink to soft sakura pink)
+  for (let row = 0; row < ASCII_BANNER.length; row++) {
+    const line = ASCII_BANNER[row];
+    let coloredLine = "";
+
+    for (let col = 0; col < line.length; col++) {
+      const char = line[col];
+      // Progress t: 0.0 (top-left) to 1.0 (bottom-right)
+      const t = (col / line.length) * 0.65 + (row / ASCII_BANNER.length) * 0.35;
+      const r = 255;
+      const g = Math.round(25 + t * 165);
+      const b = Math.round(115 + t * 95);
+      coloredLine += `\x1b[38;2;${r};${g};${b}m${char}`;
+    }
+    console.log(coloredLine + "\x1b[0m");
+  }
+
+  console.log(`  \x1b[38;2;255;150;200m⚡ Fast AniList Data Fetcher & Multi-Format Exporter\x1b[0m\n`);
 }
 
 /**
- * Prints a clean fetch summary (how many entries were retrieved).
- */
-export function printFetchSummary(parsedData, username) {
-  const cOverview = parsedData.status_counts || {};
-  const total = parsedData.total_anime_count || 0;
-
-  const parts = [];
-  if (cOverview.completed) parts.push(`${cOverview.completed} completed`);
-  if (cOverview.watching) parts.push(`${cOverview.watching} watching`);
-  if (cOverview.dropped) parts.push(`${cOverview.dropped} dropped`);
-  if (cOverview.planning) parts.push(`${cOverview.planning} planning`);
-  if (cOverview.paused) parts.push(`${cOverview.paused} paused`);
-
-  const breakdownStr = parts.length > 0 ? c.dim(`(${parts.join(", ")})`) : "";
-  console.log(`[+] ${c.bold("Fetched:")} ${c.yellow(c.bold(total))} anime entries for ${c.cyan(username)} ${breakdownStr}`);
-}
-
-/**
- * Prints the exported files notice and next helpful commands.
+ * Prints clean export confirmation and helpful example commands.
  */
 export function printExportSummary(exportedFiles, outputDir, username) {
   if (!exportedFiles || exportedFiles.length === 0) return;
 
-  console.log(`\n${c.green("✔")} ${c.bold(c.green(`Successfully exported ${exportedFiles.length} file(s) to:`))} ${c.cyan(outputDir)}`);
-  for (const file of exportedFiles) {
-    const filename = file.split(/[\\/]/).pop();
-    const ext = filename.split(".").pop().toUpperCase();
-    console.log(`  • ${c.bold(`[${ext}]`)} ${c.yellow(filename)}`);
-  }
+  const filenames = exportedFiles.map(f => f.split(/[\\/]/).pop()).join(", ");
+  console.log(`${c.green("✔")} ${c.bold("Exported to:")} ${c.yellow(outputDir)} ${c.dim(`(${filenames})`)}`);
 
-  console.log(`\n${c.dim("💡 Quick Tips:")}`);
-  console.log(`   Export to spreadsheet : ${c.green(`anifetch ${username} --csv`)}`);
-  console.log(`   Export all formats    : ${c.green(`anifetch ${username} -f all`)}`);
-  console.log(`   Export completed only : ${c.green(`anifetch ${username} --completed --json`)}\n`);
+  console.log(`\n${c.bold("EXAMPLES:")}`);
+  console.log(`  ${c.green("anifetch " + username + " --completed --json")}    ${c.dim("Export completed anime to JSON")}`);
+  console.log(`  ${c.green("anifetch " + username + " --all --csv")}           ${c.dim("Export all anime to spreadsheet")}`);
+  console.log(`  ${c.green("anifetch " + username + " -f all")}                ${c.dim("Export to JSON, CSV, TXT & Markdown")}`);
+
+  console.log(`\n${c.pink("👉 Run 'anifetch --help' to see all options, filters & formats.")}\n`);
 }
