@@ -5,8 +5,7 @@
  */
 import path from "node:path";
 import process from "node:process";
-import readline from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
+import readline from "node:readline";
 import { anifetch } from "../src/index.js";
 import { printBanner, printPinkHelp, printExportSummary, c } from "../src/ui.js";
 
@@ -121,55 +120,169 @@ async function runInteractiveMode() {
   printBanner();
   console.log(`${c.sakura("🌸 For help and CLI options, run:")} ${c.hotPink("anifetch --help")}\n`);
 
-  const rl = readline.createInterface({ input, output });
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: Boolean(process.stdin.isTTY)
+  });
+
+  function ask(query) {
+    return new Promise((resolve) => {
+      let resolved = false;
+
+      const onKeypress = (str, key) => {
+        if (!resolved && key && (key.name === "escape" || str === "\u001b")) {
+          resolved = true;
+          if (process.stdin.isTTY) {
+            process.stdin.removeListener("keypress", onKeypress);
+          }
+          resolve({ text: null, escaped: true });
+        }
+      };
+
+      if (process.stdin.isTTY) {
+        readline.emitKeypressEvents(process.stdin);
+        process.stdin.on("keypress", onKeypress);
+      }
+
+      rl.question(query, (ans) => {
+        if (!resolved) {
+          resolved = true;
+          if (process.stdin.isTTY) {
+            process.stdin.removeListener("keypress", onKeypress);
+          }
+          resolve({ text: ans, escaped: false });
+        }
+      });
+    });
+  }
+
+  let step = 1; // 1 = username, 2 = format, 3 = status, 4 = execute
+  let state = {
+    username: "",
+    format: "json",
+    status: "all",
+    extraArgs: {}
+  };
 
   try {
     while (true) {
-      const rawUser = await rl.question(`${c.hotPink("? Enter AniList username (or 'q' to quit):")} `);
-      const username = rawUser.trim();
-
-      if (username.toLowerCase() === "q" || username.toLowerCase() === "exit") {
-        console.log(`\n${c.sakura("🌸 Exiting anifetch. Goodbye!")}\n`);
-        break;
-      }
-
-      if (!username) {
-        console.log(`\n${c.red("❌ Username cannot be empty. Please enter a valid AniList username.")}\n`);
-        continue;
-      }
-
-      const rawFormat = await rl.question(`${c.hotPink("? Export format")} ${c.dim("[json / csv / txt / md / all] (default: json):")} `);
-      const format = rawFormat.trim().toLowerCase() || "json";
-
-      const rawStatus = await rl.question(`${c.hotPink("? Filter status")} ${c.dim("[all / completed / watching / dropped / planning] (default: all):")} `);
-      const status = rawStatus.trim().toLowerCase() || "all";
-
-      console.log(`\n${c.dim("[*]")} Fetching AniList collection for '${c.sakura(username)}'...\n`);
-
-      const outputDir = path.resolve(process.cwd(), "./anifetch-output");
-
-      try {
-        const { exportedFiles } = await anifetch(username, {
-          status,
-          format,
-          outputDir
-        });
-
-        if (exportedFiles.length > 0) {
-          printExportSummary(exportedFiles, outputDir);
+      if (step === 1) {
+        const { text, escaped } = await ask(`${c.hotPink("? Enter AniList username:")} `);
+        if (escaped) {
+          console.log(`\n${c.sakura("🌸 Exited anifetch. Goodbye!")}\n`);
+          break;
         }
-      } catch (err) {
-        console.error(`\n${c.red("❌ Error:")} ${err.message}`);
-        console.log(`${c.sakura("🌸 Please check the spelling and try again.")}\n`);
-        continue; // Stay inside tool on error!
-      }
 
-      const another = await rl.question(`${c.hotPink("? Fetch another profile?")} ${c.dim("(y/N):")} `);
-      if (another.trim().toLowerCase() !== "y" && another.trim().toLowerCase() !== "yes") {
-        console.log(`\n${c.sakura("🌸 All done! Have a great day.")}\n`);
-        break;
+        const inputStr = (text || "").trim();
+        if (!inputStr) {
+          console.log(`\n${c.red("❌ Username cannot be empty. Please enter a valid AniList username.")}\n`);
+          continue;
+        }
+
+        const lower = inputStr.toLowerCase();
+
+        // Check if user entered help command
+        if (["help", "--help", "-h", "-help", "anifetch help", "anifetch --help", "anifetch -h", "anifetch -help"].includes(lower)) {
+          printPinkHelp(VERSION);
+          continue;
+        }
+
+        // Check if user entered demo command
+        if (["demo", "--demo", "-d", "anifetch --demo", "anifetch demo"].includes(lower)) {
+          state.username = "demo";
+          state.extraArgs = { demo: true };
+          step = 2;
+          continue;
+        }
+
+        // If user pasted a full command line (e.g. "anifetch l1e --completed --csv")
+        if (inputStr.startsWith("anifetch ")) {
+          const parts = inputStr.slice(9).trim().split(/\s+/);
+          const parsed = parseCliArgs(parts);
+          if (parsed.help) {
+            printPinkHelp(VERSION);
+            continue;
+          }
+          if (parsed.username) {
+            state.username = parsed.username;
+            state.format = parsed.format || "json";
+            state.status = parsed.status || "all";
+            state.extraArgs = parsed;
+            step = 4;
+            continue;
+          }
+        }
+
+        // Check if user typed "q" or "exit"
+        if (lower === "q" || lower === "exit") {
+          console.log(`\n${c.sakura("🌸 Exited anifetch. Goodbye!")}\n`);
+          break;
+        }
+
+        state.username = inputStr;
+        step = 2;
+      } else if (step === 2) {
+        const { text, escaped } = await ask(`${c.hotPink("? Export format")} ${c.dim("[json / csv / txt / md / all] (default: json) [ESC to back]:")} `);
+        if (escaped) {
+          console.log(`\n${c.dim("↩ Back to username")}\n`);
+          step = 1;
+          continue;
+        }
+
+        const f = (text || "").trim().toLowerCase() || "json";
+        state.format = f;
+        step = 3;
+      } else if (step === 3) {
+        const { text, escaped } = await ask(`${c.hotPink("? Filter status")} ${c.dim("[all / completed / watching / dropped / planning] (default: all) [ESC to back]:")} `);
+        if (escaped) {
+          console.log(`\n${c.dim("↩ Back to format")}\n`);
+          step = 2;
+          continue;
+        }
+
+        const s = (text || "").trim().toLowerCase() || "all";
+        state.status = s;
+        step = 4;
+      } else if (step === 4) {
+        const isDemo = state.username === "demo" || state.extraArgs?.demo;
+        const targetUser = isDemo ? "AnimeEnthusiast" : state.username;
+
+        console.log(`\n${c.dim("[*]")} Fetching AniList collection for '${c.sakura(targetUser)}'...\n`);
+
+        const outputDir = path.resolve(process.cwd(), "./anifetch-output");
+
+        try {
+          const { exportedFiles } = await anifetch(targetUser, {
+            demo: isDemo,
+            status: state.status,
+            format: state.format,
+            outputDir,
+            ...state.extraArgs
+          });
+
+          if (exportedFiles.length > 0) {
+            printExportSummary(exportedFiles, outputDir);
+          }
+        } catch (err) {
+          console.error(`\n${c.red("❌ Error:")} ${err.message}`);
+          console.log(`${c.sakura("🌸 Please check the spelling and try again.")}\n`);
+          step = 1;
+          state.extraArgs = {};
+          continue;
+        }
+
+        const { text: anotherText } = await ask(`${c.hotPink("? Fetch another profile?")} ${c.dim("(y/N):")} `);
+        if (anotherText && (anotherText.trim().toLowerCase() === "y" || anotherText.trim().toLowerCase() === "yes")) {
+          step = 1;
+          state = { username: "", format: "json", status: "all", extraArgs: {} };
+          console.log("");
+          continue;
+        } else {
+          console.log(`\n${c.sakura("🌸 All done! Have a great day.")}\n`);
+          break;
+        }
       }
-      console.log("");
     }
   } finally {
     rl.close();
