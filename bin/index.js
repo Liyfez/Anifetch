@@ -118,7 +118,7 @@ function parseCliArgs(args) {
 
 async function runInteractiveMode() {
   printBanner();
-  console.log(`${c.sakura("🌸 For help and CLI options, run:")} ${c.hotPink("anifetch --help")}\n`);
+  console.log(`${c.muted("ℹ For options and CLI help, run:")} ${c.lightPink("anifetch --help")}\n`);
 
   const rl = readline.createInterface({
     input: process.stdin,
@@ -168,9 +168,9 @@ async function runInteractiveMode() {
   try {
     while (true) {
       if (step === 1) {
-        const { text, escaped } = await ask(`${c.hotPink("🌸 Username or command:")} `);
+        const { text, escaped } = await ask(`${c.rose("❯")} ${c.lightPink("Username or command:")} `);
         if (escaped) {
-          console.log(`\n${c.sakura("🌸 Exited anifetch. Goodbye!")}\n`);
+          console.log(`\n${c.muted("Exited anifetch. Goodbye!")}\n`);
           break;
         }
 
@@ -216,16 +216,16 @@ async function runInteractiveMode() {
 
         // Check if user typed "q" or "exit"
         if (lower === "q" || lower === "exit") {
-          console.log(`\n${c.sakura("🌸 Exited anifetch. Goodbye!")}\n`);
+          console.log(`\n${c.muted("Exited anifetch. Goodbye!")}\n`);
           break;
         }
 
         state.username = inputStr;
         step = 2;
       } else if (step === 2) {
-        const { text, escaped } = await ask(`${c.hotPink("🌸 Export format")} ${c.dim("[json / csv / txt / md / all] (default: json) [ESC to back]:")} `);
+        const { text, escaped } = await ask(`${c.rose("❯")} ${c.lightPink("Export format")} ${c.muted("[json / csv / txt / md / all] (default: json) [ESC: back]:")} `);
         if (escaped) {
-          console.log(`\n${c.dim("↩ Back to username")}\n`);
+          console.log(`\n${c.muted("↩ Back to username")}\n`);
           step = 1;
           continue;
         }
@@ -234,9 +234,9 @@ async function runInteractiveMode() {
         state.format = f;
         step = 3;
       } else if (step === 3) {
-        const { text, escaped } = await ask(`${c.hotPink("🌸 Filter status")} ${c.dim("[all / completed / watching / dropped / planning] (default: all) [ESC to back]:")} `);
+        const { text, escaped } = await ask(`${c.rose("❯")} ${c.lightPink("Filter status")} ${c.muted("[all / completed / watching / dropped / planning] (default: all) [ESC: back]:")} `);
         if (escaped) {
-          console.log(`\n${c.dim("↩ Back to format")}\n`);
+          console.log(`\n${c.muted("↩ Back to format")}\n`);
           step = 2;
           continue;
         }
@@ -248,7 +248,7 @@ async function runInteractiveMode() {
         const isDemo = state.username === "demo" || state.extraArgs?.demo;
         const targetUser = isDemo ? "AnimeEnthusiast" : state.username;
 
-        console.log(`\n${c.dim("[*]")} Fetching AniList collection for '${c.sakura(targetUser)}'...\n`);
+        console.log(`\n${c.muted("[*]")} Fetching AniList collection for '${c.sakura(targetUser)}'...\n`);
 
         const outputDir = path.resolve(process.cwd(), "./anifetch-output");
 
@@ -266,20 +266,20 @@ async function runInteractiveMode() {
           }
         } catch (err) {
           console.error(`\n${c.red("❌ Error:")} ${err.message}`);
-          console.log(`${c.sakura("🌸 Please check the spelling and try again.")}\n`);
+          console.log(`${c.muted("Please check the spelling and try again.")}\n`);
           step = 1;
           state.extraArgs = {};
           continue;
         }
 
-        const { text: anotherText } = await ask(`${c.hotPink("🌸 Fetch another profile?")} ${c.dim("(y/N):")} `);
+        const { text: anotherText } = await ask(`${c.rose("❯")} ${c.lightPink("Fetch another profile?")} ${c.muted("(y/N):")} `);
         if (anotherText && (anotherText.trim().toLowerCase() === "y" || anotherText.trim().toLowerCase() === "yes")) {
           step = 1;
           state = { username: "", format: "json", status: "all", extraArgs: {} };
           console.log("");
           continue;
         } else {
-          console.log(`\n${c.sakura("🌸 All done! Have a great day.")}\n`);
+          console.log(`\n${c.muted("All done! Have a great day.")}\n`);
           break;
         }
       }
@@ -322,17 +322,17 @@ async function run() {
   if (!username && !isDemo) {
     printBanner();
     console.error(`${c.red("❌ Error:")} AniList username is required.\n`);
-    console.error(`Usage: ${c.rose("anifetch <username>")} (e.g. ${c.rose("anifetch <username>")} or ${c.rose("anifetch --demo")})\n`);
-    console.error(`${c.sakura("🌸 Run 'anifetch --help' to see all options & commands.")}\n`);
+    console.error(`Usage: ${c.lightPink("anifetch <username>")} (e.g. ${c.lightPink("anifetch <username>")} or ${c.lightPink("anifetch --demo")})\n`);
+    console.error(`${c.muted("ℹ Run 'anifetch --help' to see all options & commands.")}\n`);
     process.exit(1);
   }
 
   if (!options.quiet && !options.jsonStdout) {
     printBanner();
     if (isDemo) {
-      console.log(`${c.dim("[*]")} ${c.sakura("Running in DEMO mode with sample dataset...")}\n`);
+      console.log(`${c.muted("[*]")} ${c.sakura("Running in DEMO mode with sample dataset...")}\n`);
     } else {
-      console.log(`${c.dim("[*]")} Fetching AniList collection for '${c.sakura(username)}'...\n`);
+      console.log(`${c.muted("[*]")} Fetching AniList collection for '${c.sakura(username)}'...\n`);
     }
   }
 
@@ -362,7 +362,7 @@ async function run() {
     }
   } catch (err) {
     console.error(`\n${c.red("❌ Error:")} ${err.message}\n`);
-    console.error(`${c.sakura("🌸 Run 'anifetch --help' for usage guide.")}\n`);
+    console.error(`${c.muted("ℹ Run 'anifetch --help' for usage guide.")}\n`);
     process.exit(1);
   }
 }

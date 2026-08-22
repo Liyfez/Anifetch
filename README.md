@@ -13,7 +13,7 @@
 
 **Fast AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, Markdown)**
 
-[![npm version](https://img.shields.io/npm/v/anifetch.svg?color=ff69b4&style=flat-square)](https://www.npmjs.com/package/anifetch)
+[![npm version](https://img.shields.io/npm/v/anifetch.svg?color=f472b6&style=flat-square)](https://www.npmjs.com/package/anifetch)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?style=flat-square)](https://nodejs.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](#)
@@ -26,7 +26,7 @@
 
 ## ⚡ How to Open the Tool
 
-### 1. Interactive Mode (Just open the tool!)
+### 1. Interactive Mode
 Simply run `anifetch` with no arguments to launch interactive mode:
 
 ```bash
@@ -36,7 +36,6 @@ Or if installed globally:
 ```bash
 anifetch
 ```
-*(For all options and flags, run `anifetch --help`)*
 
 ---
 
@@ -84,22 +83,22 @@ anifetch --demo
   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
   🌸 Fast AniList Data Fetcher & Multi-Format Exporter
 
-🌸 For help and CLI options, run: anifetch --help
+ℹ For options and CLI help, run: anifetch --help
 
-🌸 Username or command: <username>
-🌸 Export format [json / csv / txt / md / all] (default: json) [ESC to back]: all
-🌸 Filter status [all / completed / watching / dropped / planning] (default: all) [ESC to back]: all
+❯ Username or command: <username>
+❯ Export format [json / csv / txt / md / all] (default: json) [ESC: back]: all
+❯ Filter status [all / completed / watching / dropped / planning] (default: all) [ESC: back]: all
 
 [*] Fetching AniList collection for '<username>'...
 
-🌸 Exported to: C:\Users\...\anifetch-output (<username>_anime_list.json, <username>_deep_analysis.json)
+✔ Exported to: C:\Users\...\anifetch-output (<username>_anime_list.json, <username>_deep_analysis.json)
 
 EXAMPLES:
   anifetch <username> --completed --json    Export completed anime to JSON
   anifetch <username> --all --csv           Export all anime to spreadsheet
   anifetch <username> -f all                Export to JSON, CSV, TXT & Markdown
 
-🌸 Run 'anifetch --help' to see all options, filters & formats.
+ℹ Run 'anifetch --help' to see all options, filters & formats.
 ```
 
 ---
@@ -121,7 +120,7 @@ EXAMPLES:
 ```text
 USAGE:
   anifetch                                    Open interactive mode
-  anifetch <username> [options]              Fetch profile data
+  anifetch <username> [options]              Fetch profile data directly
   npx anifetch <username> [options]          Run via npx directly
 
 OPTIONS & FLAGS:
