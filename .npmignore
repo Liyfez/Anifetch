@@ -1,0 +1,5 @@
+test/
+.github/
+anifetch-output/
+output/
+*.log

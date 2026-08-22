@@ -1,0 +1,40 @@
+{
+  "name": "anifetch",
+  "version": "1.0.0",
+  "description": "Fast AniList profile parser, multi-format exporter (JSON, CSV, TXT, Markdown), and deep taste analyzer CLI tool.",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "anifetch": "./bin/index.js"
+  },
+  "scripts": {
+    "start": "node bin/index.js",
+    "test": "node --test test/index.test.js"
+  },
+  "keywords": [
+    "anilist",
+    "anime",
+    "cli",
+    "parser",
+    "analyzer",
+    "export",
+    "json",
+    "csv",
+    "markdown",
+    "taste-profile",
+    "recommendations"
+  ],
+  "author": "Liyfez",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Liyfez/anifetch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Liyfez/anifetch/issues"
+  },
+  "homepage": "https://github.com/Liyfez/anifetch#readme"
+}
