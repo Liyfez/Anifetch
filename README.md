@@ -1,130 +1,159 @@
+<div align="center">
+
+```
+   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗
+  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║
+  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║
+  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║
+  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║
+  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
+```
+
 # 🎌 anifetch
 
-> **Fast AniList profile fetcher, multi-format exporter & taste analyzer CLI.**
+**Fast AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, Markdown)**
 
 [![npm version](https://img.shields.io/npm/v/anifetch.svg?color=cb3837&style=flat-square)](https://www.npmjs.com/package/anifetch)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?style=flat-square)](https://nodejs.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](#)
 
-Fetch any AniList profile, filter by status, export to **JSON**, **CSV**, **TXT**, and **Markdown**, and see a clean summary in your terminal.
+*Extract, filter, and export your entire AniList anime collection into **JSON**, **CSV** (Excel/Sheets), **TXT**, and **Markdown** with automated rating & taste analysis.*
 
-```text
-╭─ l1e @ AniList ───────────────────────────────────────╮
-│  Anime        : 199 total (178 completed, 13 watching, 4 dropped, 4 planning)
-│  Episodes     : 2931 eps (~49.57 days / 1189.73 hrs)
-│  Completion   : [█████████████░ 91.3%]
-│  Mean Score   : 90.31 / 100 (median: 90 | 131 masterpieces, 42 great)
-│  Favorites    : Initial D EXTRA STAGE 2 (98), MF Ghost (99), HELLO WORLD (98)
-│  Top Genres   : Horror (93.44), Adventure (92.96), Fantasy (92.69)
-│  Top Studios  : MADHOUSE, Kyoto Animation, A-1 Pictures
-╰────────────────────────────────────────────────────────╯
-
-✔ Exported: l1e_anime_list.json, l1e_deep_analysis.json -> ./anifetch-output
-```
+</div>
 
 ---
 
-## ⚡ Quick Start
+## ⚡ Instant Execution (No Install Needed)
 
-### Run with `npx` (No install needed):
+Run directly with `npx`:
+
 ```bash
 npx anifetch <username>
 ```
 
-### Or install globally:
+Or install globally:
+
 ```bash
 npm install -g anifetch
 ```
 
-### Try the instant demo:
-```bash
-npx anifetch --demo
-```
-
 ---
 
-## 🚀 Examples
+## 🚀 How to Fetch & Export Data
 
 ```bash
-# 1. Fetch profile & export to JSON
+# 1. Fetch entire anime list and export to JSON
 anifetch <username>
 
-# 2. Export only completed anime to JSON
+# 2. Export ONLY completed anime to JSON
 anifetch <username> --completed --json
 
-# 3. Export entire anime list as CSV (spreadsheet)
+# 3. Export all anime into a CSV spreadsheet (Excel / Google Sheets)
 anifetch <username> --all --csv
 
-# 4. Export dropped anime to plain text report
+# 4. Export dropped anime to a plain-text report
 anifetch <username> --dropped --txt
 
-# 5. Export all 4 formats (JSON, CSV, TXT, Markdown) at once
+# 5. Export EVERYTHING into all 4 formats (JSON, CSV, TXT, Markdown) at once
 anifetch <username> -f all
 
-# 6. Filter by minimum score
+# 6. Filter by score: Only anime rated 85+
 anifetch <username> --min-score 85 --csv
 
-# 7. Output pure JSON to stdout (for piping to jq)
+# 7. Custom output folder
+anifetch <username> -f all -o ./my-anime-data
+
+# 8. Stream pure JSON to stdout (for piping to jq or scripts)
 anifetch <username> --json-stdout | jq .
+
+# 9. Test extraction with built-in demo profile
+anifetch --demo
 ```
 
 ---
 
-## 📁 Export Formats
+## 🖥️ Terminal Output
+
+```text
+   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗
+  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║
+  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║
+  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║
+  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║
+  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
+  ⚡ AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, MD)
+
+[*] Connecting to AniList GraphQL API for user: 'l1e'...
+[+] Fetched: 199 anime entries for l1e (178 completed, 13 watching, 4 dropped, 4 planning)
+
+✔ Successfully exported 2 file(s) to: ./anifetch-output
+  • [JSON] l1e_anime_list.json
+  • [JSON] l1e_deep_analysis.json
+
+💡 Quick Tips:
+   Export to spreadsheet : anifetch l1e --csv
+   Export all formats    : anifetch l1e -f all
+   Export completed only : anifetch l1e --completed --json
+```
+
+---
+
+## 📁 Generated Output Files
 
 | Format | Flag | Output Files | Description |
 | :--- | :--- | :--- | :--- |
-| **JSON** | `-f json` / `--json` | `<user>_anime_list.json`<br>`<user>_deep_analysis.json` | Clean structured list with all titles, personal scores, progress, tags, studios, and full metrics. |
-| **CSV** | `-f csv` / `--csv` | `<user>_anime_list.csv`<br>`<user>_genre_breakdown.csv`<br>`<user>_studio_breakdown.csv` | Excel/Google Sheets ready spreadsheets for anime library, genre metrics, and studio performance. |
+| **JSON** | `-f json` / `--json` | `<user>_anime_list.json`<br>`<user>_deep_analysis.json` | Full structured list with all titles, personal scores, progress, tags, studios, and complete metrics. |
+| **CSV** | `-f csv` / `--csv` | `<user>_anime_list.csv`<br>`<user>_genre_breakdown.csv`<br>`<user>_studio_breakdown.csv` | Spreadsheets ready for Microsoft Excel, Numbers, or Google Sheets with clean escaping. |
 | **TXT** | `-f txt` / `--txt` | `<user>_summary.txt` | Human-readable text report with status breakdowns, score histograms, hot takes, and full ASCII table. |
-| **Markdown** | `-f md` / `--md` | `<user>_analysis_report.md` | GitHub-flavored Markdown report with formatted tables and direct AniList links. |
+| **Markdown** | `-f md` / `--md` | `<user>_analysis_report.md` | GitHub-flavored Markdown report with formatted tables and direct AniList anime links. |
 | **ALL** | `-f all` | **All 7 files** | Generates all 4 formats simultaneously. |
 
 ---
 
-## 🛠️ CLI Options
+## 🛠️ CLI Options Reference
 
 ```text
 USAGE:
   anifetch <username> [options]
   npx anifetch <username> [options]
 
-OPTIONS:
-  -u, --username <name>    AniList username (or pass as first argument)
-  -s, --status <status>    Filter list: completed, watching, dropped, paused, planning, all (default: all)
+OPTIONS & FLAGS:
+  -u, --username <name>    AniList username to fetch (or pass as first argument)
+  -s, --status <status>    Filter status: completed, watching, dropped, paused, planning, all (default: all)
   -f, --format <format>    Export format: json, csv, txt, md, all (default: json)
-  -o, --output <dir>       Output folder (default: ./anifetch-output)
-  -d, --demo               Run instant preview with sample data
-  --no-export              Display stats without saving files
-  --min-score <number>     Filter anime with rating >= score
-  --genre <genre>          Filter anime by genre
+  -o, --output <dir>       Destination folder for files (default: ./anifetch-output)
+  -d, --demo               Run test with sample demo profile (no internet required)
+  --min-score <number>     Filter anime by minimum rating (e.g. --min-score 80)
+  --genre <genre>          Filter anime by genre (e.g. --genre Action)
   --sort <field>           Sort by: score, title, episodes, date, popularity
-  --json-stdout            Output pure JSON to stdout
-  -q, --quiet              Quiet mode
-  -v, --version            Show version
-  -h, --help               Show help guide
+  --order <asc|desc>       Sort order: asc or desc (default: desc)
+  --json-stdout            Output pure JSON to stdout (disables banner and file writes)
+  -q, --quiet              Quiet mode (suppress terminal messages)
+  -v, --version            Show version number
+  -h, --help               Show this help guide
 
-SHORTHANDS:
-  --completed, --watching, --dropped, --planning, --all
+SHORTHAND SWITCHES:
+  --completed, --watching, --dropped, --paused, --planning, --all
   --json, --csv, --txt, --md
 ```
 
 ---
 
-## 💻 Programmatic API
+## 💻 Programmatic Node.js API
 
 ```javascript
 import { anifetch } from "anifetch";
 
+// Fetch and export programmatically
 const result = await anifetch("l1e", {
   status: "completed",
   format: "all",
   outputDir: "./output"
 });
 
-console.log(`Mean score: ${result.analysis.rating_statistics.user_mean_score}`);
-console.log(`Exported files:`, result.exportedFiles);
+console.log("Total Fetched:", result.parsed.total_anime_count);
+console.log("Exported Files:", result.exportedFiles);
 ```
 
 ---

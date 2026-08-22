@@ -6,44 +6,58 @@
 import path from "node:path";
 import process from "node:process";
 import { anifetch } from "../src/index.js";
-import { printDashboard, printExportSummary, c } from "../src/ui.js";
+import { printBanner, printFetchSummary, printExportSummary, c } from "../src/ui.js";
 
 const VERSION = "1.0.0";
 
 function printHelp() {
   console.log(`
-${c.bold(c.cyan("anifetch"))} ${c.dim(`v${VERSION}`)} - Fast AniList profile fetcher, parser & exporter
-
 ${c.bold("USAGE:")}
   ${c.green("anifetch")} ${c.yellow("<username>")} ${c.dim("[options]")}
   ${c.green("npx anifetch")} ${c.yellow("<username>")} ${c.dim("[options]")}
 
-${c.bold("EXAMPLES:")}
-  anifetch ${c.yellow("l1e")}
-  anifetch ${c.yellow("l1e")} ${c.cyan("--completed --json")}
-  anifetch ${c.yellow("l1e")} ${c.cyan("--all --csv")}
-  anifetch ${c.yellow("l1e")} ${c.cyan("-s dropped -f txt")}
-  anifetch ${c.yellow("l1e")} ${c.cyan("-f all")}
-  anifetch ${c.yellow("l1e")} ${c.cyan("--min-score 85")}
-  anifetch ${c.magenta("--demo")}
+${c.bold("HOW TO FETCH DATA (EXAMPLES):")}
+  ${c.dim("# 1. Fetch entire profile and export to JSON")}
+  ${c.green("anifetch")} ${c.yellow("l1e")}
 
-${c.bold("OPTIONS:")}
-  ${c.yellow("-u, --username <name>")}    AniList username (or pass as first argument)
-  ${c.yellow("-s, --status <status>")}    Filter list: ${c.dim("completed, watching, dropped, paused, planning, all")} (default: all)
+  ${c.dim("# 2. Export only completed anime to JSON")}
+  ${c.green("anifetch")} ${c.yellow("l1e")} ${c.cyan("--completed --json")}
+
+  ${c.dim("# 3. Export entire anime list as a CSV spreadsheet (Excel / Sheets)")}
+  ${c.green("anifetch")} ${c.yellow("l1e")} ${c.cyan("--all --csv")}
+
+  ${c.dim("# 4. Export dropped anime to plain text report")}
+  ${c.green("anifetch")} ${c.yellow("l1e")} ${c.cyan("--dropped --txt")}
+
+  ${c.dim("# 5. Export EVERYTHING to all 4 formats (JSON, CSV, TXT, Markdown) at once")}
+  ${c.green("anifetch")} ${c.yellow("l1e")} ${c.cyan("-f all")}
+
+  ${c.dim("# 6. Filter by minimum score (e.g. only anime rated 85+)")}
+  ${c.green("anifetch")} ${c.yellow("l1e")} ${c.cyan("--min-score 85 --csv")}
+
+  ${c.dim("# 7. Stream pure JSON to stdout (for piping to jq or webhooks)")}
+  ${c.green("anifetch")} ${c.yellow("l1e")} ${c.cyan("--json-stdout")} | jq .
+
+  ${c.dim("# 8. Test data extraction with sample demo profile")}
+  ${c.green("anifetch")} ${c.magenta("--demo")}
+
+${c.bold("OPTIONS & FLAGS:")}
+  ${c.yellow("-u, --username <name>")}    AniList username to fetch (or pass as first argument)
+  ${c.yellow("-s, --status <status>")}    Filter status: ${c.dim("completed, watching, dropped, paused, planning, all")} (default: all)
   ${c.yellow("-f, --format <format>")}    Export format: ${c.dim("json, csv, txt, md, all")} (default: json)
-  ${c.yellow("-o, --output <dir>")}       Output folder (default: ./anifetch-output)
-  ${c.yellow("-d, --demo")}               Run instant preview with sample data
-  ${c.yellow("--no-export")}              Display stats without saving files
-  ${c.yellow("--min-score <number>")}     Filter anime with rating >= score
-  ${c.yellow("--genre <genre>")}          Filter anime by genre
+  ${c.yellow("-o, --output <dir>")}       Destination folder for files (default: ./anifetch-output)
+  ${c.yellow("-d, --demo")}               Run test with sample demo profile (no internet required)
+  ${c.yellow("--min-score <number>")}     Filter anime by minimum rating (e.g. --min-score 80)
+  ${c.yellow("--genre <genre>")}          Filter anime by genre (e.g. --genre Action)
   ${c.yellow("--sort <field>")}           Sort by: ${c.dim("score, title, episodes, date, popularity")}
-  ${c.yellow("--json-stdout")}            Output pure JSON to stdout
-  ${c.yellow("-q, --quiet")}              Quiet mode
-  ${c.yellow("-v, --version")}            Show version
-  ${c.yellow("-h, --help")}               Show help guide
+  ${c.yellow("--order <asc|desc>")}       Sort order: ${c.dim("asc or desc")} (default: desc)
+  ${c.yellow("--json-stdout")}            Output pure JSON to stdout (disables banner and file writes)
+  ${c.yellow("-q, --quiet")}              Quiet mode (suppress terminal messages)
+  ${c.yellow("-v, --version")}            Show version number
+  ${c.yellow("-h, --help")}               Show this help guide
 
-${c.bold("SHORTHANDS:")}
-  ${c.cyan("--completed")}, ${c.cyan("--watching")}, ${c.cyan("--dropped")}, ${c.cyan("--planning")}, ${c.cyan("--all")}
+${c.bold("SHORTHAND SWITCHES:")}
+  ${c.cyan("--completed")}, ${c.cyan("--watching")}, ${c.cyan("--dropped")}, ${c.cyan("--paused")}, ${c.cyan("--planning")}, ${c.cyan("--all")}
   ${c.cyan("--json")}, ${c.cyan("--csv")}, ${c.cyan("--txt")}, ${c.cyan("--md")}
 `);
 }
@@ -151,6 +165,7 @@ async function run() {
   const options = parseCliArgs(args);
 
   if (options.help || args.length === 0) {
+    printBanner();
     printHelp();
     process.exit(0);
   }
@@ -164,9 +179,19 @@ async function run() {
   const username = options.username || (isDemo ? "AnimeEnthusiast" : null);
 
   if (!username && !isDemo) {
-    console.error(`\n${c.red("Error:")} AniList username is required.`);
-    console.error(`Usage: anifetch <username> (e.g. anifetch l1e or anifetch --demo)\n`);
+    console.error(`\n${c.red("❌ Error:")} AniList username is required.`);
+    console.error(`Usage: ${c.green("anifetch <username>")} (e.g. ${c.green("anifetch l1e")} or ${c.green("anifetch --demo")})`);
+    console.error(`Run ${c.cyan("anifetch --help")} for all options.\n`);
     process.exit(1);
+  }
+
+  if (!options.quiet && !options.jsonStdout) {
+    printBanner();
+    if (isDemo) {
+      console.log(`[*] ${c.magenta("Running in DEMO mode")} with sample anime dataset...`);
+    } else {
+      console.log(`[*] Connecting to AniList GraphQL API for user: '${c.cyan(username)}'...`);
+    }
   }
 
   try {
@@ -189,13 +214,13 @@ async function run() {
     }
 
     if (!options.quiet) {
-      printDashboard(parsed, analysis);
+      printFetchSummary(parsed, username);
       if (exportedFiles.length > 0) {
-        printExportSummary(exportedFiles, options.output);
+        printExportSummary(exportedFiles, options.output, username);
       }
     }
   } catch (err) {
-    console.error(`\n${c.red("Error:")} ${err.message}\n`);
+    console.error(`\n${c.red("❌ Error:")} ${err.message}\n`);
     process.exit(1);
   }
 }

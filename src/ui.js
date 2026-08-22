@@ -1,5 +1,5 @@
 /**
- * Clean, minimalist and aesthetic terminal UI for anifetch.
+ * Terminal output renderer for anifetch: Big ASCII banner, data fetch progress & export notices.
  */
 
 // ANSI Color & Style Helpers (supports NO_COLOR / dumb terminals)
@@ -17,88 +17,52 @@ export const c = {
 };
 
 /**
- * Creates a clean visual progress bar: [██████████░░░░] 81.8%
+ * Prints the big bold ANIFETCH banner.
  */
-export function createProgressBar(percentage, length = 16) {
-  const clamped = Math.max(0, Math.min(100, percentage));
-  const filled = Math.round((clamped / 100) * length);
-  const empty = length - filled;
-  const bar = "█".repeat(filled) + "░".repeat(empty);
-  return `${c.green(bar)} ${c.bold(clamped.toFixed(1) + "%")}`;
+export function printBanner() {
+  console.log(c.cyan(`
+   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗
+  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║
+  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║
+  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║
+  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║
+  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝`));
+  console.log(c.dim(`  ⚡ AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, MD)\n`));
 }
 
 /**
- * Prints a clean, modern aesthetic summary.
+ * Prints a clean fetch summary (how many entries were retrieved).
  */
-export function printDashboard(parsedData, analysisData) {
-  const user = parsedData.user || {};
-  const cOverview = analysisData.consumption_overview || {};
-  const rStats = analysisData.rating_statistics || {};
-  const div = analysisData.community_divergence || {};
-  const genres = analysisData.genre_analytics || {};
-  const studios = analysisData.studio_analytics || {};
+export function printFetchSummary(parsedData, username) {
+  const cOverview = parsedData.status_counts || {};
+  const total = parsedData.total_anime_count || 0;
 
-  const completed = cOverview.status_breakdown?.completed?.count || 0;
-  const watching = cOverview.status_breakdown?.watching?.count || 0;
-  const dropped = cOverview.status_breakdown?.dropped?.count || 0;
-  const planning = cOverview.status_breakdown?.planning?.count || 0;
-  const time = cOverview.total_time_spent || {};
+  const parts = [];
+  if (cOverview.completed) parts.push(`${cOverview.completed} completed`);
+  if (cOverview.watching) parts.push(`${cOverview.watching} watching`);
+  if (cOverview.dropped) parts.push(`${cOverview.dropped} dropped`);
+  if (cOverview.planning) parts.push(`${cOverview.planning} planning`);
+  if (cOverview.paused) parts.push(`${cOverview.paused} paused`);
 
-  // Top 3 personal favorites / gems
-  const gems = (div.top_user_higher_than_community || [])
-    .slice(0, 3)
-    .map(i => `${i.title} (${i.user_score})`)
-    .join(", ");
-
-  // Top 3 genres
-  const topGenres = (genres.favorite_genres_by_score || [])
-    .slice(0, 3)
-    .map(g => `${g.genre} (${g.user_mean_score})`)
-    .join(", ");
-
-  // Top 3 studios
-  const topStudios = (studios.most_watched_studios || [])
-    .slice(0, 3)
-    .map(s => s.studio)
-    .join(", ");
-
-  // Score tier highlight
-  const masterpieces = rStats.score_distribution_tiers?.masterpiece_90_100?.count || 0;
-  const great = rStats.score_distribution_tiers?.great_80_89?.count || 0;
-
-  const header = ` ${user.name} @ AniList `;
-  console.log(`\n${c.cyan(c.bold("╭─" + header + "─".repeat(Math.max(2, 54 - header.length)) + "╮"))}`);
-
-  const lines = [
-    `${c.bold("Anime".padEnd(12))} : ${c.yellow(c.bold(cOverview.total_anime))} total ${c.dim(`(${completed} completed, ${watching} watching, ${dropped} dropped, ${planning} planning)`)}`,
-    `${c.bold("Episodes".padEnd(12))} : ${c.yellow(c.bold(cOverview.total_episodes_watched))} eps ${c.dim(`(~${time.days} days / ${time.hours} hrs)`)}`,
-    `${c.bold("Completion".padEnd(12))} : [${createProgressBar(cOverview.completion_rate_percentage, 14)}]`,
-    `${c.bold("Mean Score".padEnd(12))} : ${c.bold(c.yellow(rStats.user_mean_score ?? "N/A"))} / 100 ${c.dim(`(median: ${rStats.user_median_score ?? "N/A"} | ${masterpieces} masterpieces, ${great} great)`)}`
-  ];
-
-  if (gems) {
-    lines.push(`${c.bold("Favorites".padEnd(12))} : ${c.green(gems)}`);
-  }
-  if (topGenres) {
-    lines.push(`${c.bold("Top Genres".padEnd(12))} : ${c.cyan(topGenres)}`);
-  }
-  if (topStudios) {
-    lines.push(`${c.bold("Top Studios".padEnd(12))} : ${c.magenta(topStudios)}`);
-  }
-
-  for (const line of lines) {
-    console.log(`│  ${line}`);
-  }
-
-  console.log(c.cyan(c.bold("╰" + "─".repeat(56) + "╯")));
+  const breakdownStr = parts.length > 0 ? c.dim(`(${parts.join(", ")})`) : "";
+  console.log(`[+] ${c.bold("Fetched:")} ${c.yellow(c.bold(total))} anime entries for ${c.cyan(username)} ${breakdownStr}`);
 }
 
 /**
- * Clean export notice.
+ * Prints the exported files notice and next helpful commands.
  */
-export function printExportSummary(exportedFiles, outputDir) {
+export function printExportSummary(exportedFiles, outputDir, username) {
   if (!exportedFiles || exportedFiles.length === 0) return;
 
-  const filenames = exportedFiles.map(f => f.split(/[\\/]/).pop()).join(", ");
-  console.log(`\n${c.green("✔")} ${c.bold("Exported:")} ${c.yellow(filenames)} ${c.dim(`-> ${outputDir}`)}\n`);
+  console.log(`\n${c.green("✔")} ${c.bold(c.green(`Successfully exported ${exportedFiles.length} file(s) to:`))} ${c.cyan(outputDir)}`);
+  for (const file of exportedFiles) {
+    const filename = file.split(/[\\/]/).pop();
+    const ext = filename.split(".").pop().toUpperCase();
+    console.log(`  • ${c.bold(`[${ext}]`)} ${c.yellow(filename)}`);
+  }
+
+  console.log(`\n${c.dim("💡 Quick Tips:")}`);
+  console.log(`   Export to spreadsheet : ${c.green(`anifetch ${username} --csv`)}`);
+  console.log(`   Export all formats    : ${c.green(`anifetch ${username} -f all`)}`);
+  console.log(`   Export completed only : ${c.green(`anifetch ${username} --completed --json`)}\n`);
 }
