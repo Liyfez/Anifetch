@@ -124,40 +124,55 @@ async function runInteractiveMode() {
   const rl = readline.createInterface({ input, output });
 
   try {
-    const rawUser = await rl.question(`${c.hotPink("? Enter AniList username:")} `);
-    const username = rawUser.trim();
+    while (true) {
+      const rawUser = await rl.question(`${c.hotPink("? Enter AniList username (or 'q' to quit):")} `);
+      const username = rawUser.trim();
 
-    if (!username) {
-      console.log(`\n${c.red("❌ Username cannot be empty.")}\n`);
-      rl.close();
-      process.exit(1);
+      if (username.toLowerCase() === "q" || username.toLowerCase() === "exit") {
+        console.log(`\n${c.sakura("🌸 Exiting anifetch. Goodbye!")}\n`);
+        break;
+      }
+
+      if (!username) {
+        console.log(`\n${c.red("❌ Username cannot be empty. Please enter a valid AniList username.")}\n`);
+        continue;
+      }
+
+      const rawFormat = await rl.question(`${c.hotPink("? Export format")} ${c.dim("[json / csv / txt / md / all] (default: json):")} `);
+      const format = rawFormat.trim().toLowerCase() || "json";
+
+      const rawStatus = await rl.question(`${c.hotPink("? Filter status")} ${c.dim("[all / completed / watching / dropped / planning] (default: all):")} `);
+      const status = rawStatus.trim().toLowerCase() || "all";
+
+      console.log(`\n${c.dim("[*]")} Fetching AniList collection for '${c.sakura(username)}'...\n`);
+
+      const outputDir = path.resolve(process.cwd(), "./anifetch-output");
+
+      try {
+        const { exportedFiles } = await anifetch(username, {
+          status,
+          format,
+          outputDir
+        });
+
+        if (exportedFiles.length > 0) {
+          printExportSummary(exportedFiles, outputDir);
+        }
+      } catch (err) {
+        console.error(`\n${c.red("❌ Error:")} ${err.message}`);
+        console.log(`${c.sakura("🌸 Please check the spelling and try again.")}\n`);
+        continue; // Stay inside tool on error!
+      }
+
+      const another = await rl.question(`${c.hotPink("? Fetch another profile?")} ${c.dim("(y/N):")} `);
+      if (another.trim().toLowerCase() !== "y" && another.trim().toLowerCase() !== "yes") {
+        console.log(`\n${c.sakura("🌸 All done! Have a great day.")}\n`);
+        break;
+      }
+      console.log("");
     }
-
-    const rawFormat = await rl.question(`${c.hotPink("? Export format")} ${c.dim("[json / csv / txt / md / all] (default: json):")} `);
-    const format = rawFormat.trim().toLowerCase() || "json";
-
-    const rawStatus = await rl.question(`${c.hotPink("? Filter status")} ${c.dim("[all / completed / watching / dropped / planning] (default: all):")} `);
-    const status = rawStatus.trim().toLowerCase() || "all";
-
+  } finally {
     rl.close();
-
-    console.log(`\n${c.dim("[*]")} Fetching AniList collection for '${c.sakura(username)}'...\n`);
-
-    const outputDir = path.resolve(process.cwd(), "./anifetch-output");
-
-    const { exportedFiles } = await anifetch(username, {
-      status,
-      format,
-      outputDir
-    });
-
-    if (exportedFiles.length > 0) {
-      printExportSummary(exportedFiles, "./anifetch-output");
-    }
-  } catch (err) {
-    rl.close();
-    console.error(`\n${c.red("❌ Error:")} ${err.message}\n`);
-    process.exit(1);
   }
 }
 
@@ -176,8 +191,8 @@ async function run() {
     process.exit(0);
   }
 
-  // If no arguments provided and running in interactive terminal: launch interactive mode!
-  if (args.length === 0 && process.stdin.isTTY) {
+  // If interactive flag or no arguments provided and in TTY: launch interactive mode!
+  if (options.interactive || (args.length === 0 && process.stdin.isTTY)) {
     await runInteractiveMode();
     return;
   }
@@ -229,7 +244,7 @@ async function run() {
 
     if (!options.quiet) {
       if (exportedFiles.length > 0) {
-        printExportSummary(exportedFiles, options.output);
+        printExportSummary(exportedFiles, outputDir || options.output);
       }
     }
   } catch (err) {

@@ -1,6 +1,8 @@
 /**
  * Pure Pink, Rose & Sakura Palette & Output Renderer for anifetch.
  */
+import path from "node:path";
+import process from "node:process";
 
 // ANSI Color & Style Helpers (supports NO_COLOR / dumb terminals)
 const useColor = !process.env.NO_COLOR && process.stdout.isTTY !== false;
@@ -15,7 +17,7 @@ export const c = {
   lavender: (s) => (useColor ? `\x1b[38;2;220;175;245m${s}\x1b[0m` : String(s)),
   coral: (s) => (useColor ? `\x1b[38;2;255;150;170m${s}\x1b[0m` : String(s)),
   white: (s) => (useColor ? `\x1b[1m\x1b[37m${s}\x1b[0m` : String(s)),
-  green: (s) => (useColor ? `\x1b[38;2;255;105;180m${s}\x1b[0m` : String(s)), // stylized pink checkmark
+  green: (s) => (useColor ? `\x1b[38;2;255;105;180m${s}\x1b[0m` : String(s)),
   red: (s) => (useColor ? `\x1b[38;2;255;60;100m\x1b[1m${s}\x1b[0m` : String(s))
 };
 
@@ -64,7 +66,7 @@ export function printPinkHelp(version = "1.0.0") {
   console.log(`
 ${c.hotPink("USAGE:")}
   ${c.rose("anifetch")}                                    ${c.dim("Open interactive mode")}
-  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.dim("[options]")}              ${c.dim("Fetch profile data")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.dim("[options]")}              ${c.dim("Fetch profile data directly")}
   ${c.rose("npx anifetch")} ${c.sakura("<username>")} ${c.dim("[options]")}          ${c.dim("Run via npx directly")}
 
 ${c.hotPink("EXAMPLES:")}
@@ -96,18 +98,20 @@ ${c.hotPink("SHORTHAND SWITCHES:")}
   ${c.lavender("--completed")}, ${c.lavender("--watching")}, ${c.lavender("--dropped")}, ${c.lavender("--paused")}, ${c.lavender("--planning")}, ${c.lavender("--all")}
   ${c.lavender("--json")}, ${c.lavender("--csv")}, ${c.lavender("--txt")}, ${c.lavender("--md")}
 
-${c.sakura("🌸 Run 'anifetch <username>' to fetch your data or 'anifetch' to start interactive mode.")}
+${c.sakura("🌸 Run 'anifetch <username>' to fetch data or run 'anifetch' to start interactive mode.")}
 `);
 }
 
 /**
- * Prints clean export confirmation and helpful example commands with the pink theme.
+ * Prints clean export confirmation with FULL ABSOLUTE PATH and example commands.
  */
 export function printExportSummary(exportedFiles, outputDir) {
   if (!exportedFiles || exportedFiles.length === 0) return;
 
+  const fullPath = path.isAbsolute(outputDir) ? outputDir : path.resolve(process.cwd(), outputDir);
   const filenames = exportedFiles.map(f => f.split(/[\\/]/).pop()).join(", ");
-  console.log(`🌸 ${c.bold("Exported to:")} ${c.sakura(outputDir)} ${c.dim(`(${filenames})`)}`);
+
+  console.log(`🌸 ${c.bold("Exported to:")} ${c.sakura(fullPath)} ${c.dim(`(${filenames})`)}`);
 
   console.log(`\n${c.hotPink("EXAMPLES:")}`);
   console.log(`  ${c.rose("anifetch <username> --completed --json")}    ${c.dim("Export completed anime to JSON")}`);
