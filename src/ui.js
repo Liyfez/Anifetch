@@ -1,5 +1,5 @@
 /**
- * Smooth Pink Gradient Banner & Clean Output Renderer for anifetch.
+ * Pure Pink, Rose & Sakura Palette & Output Renderer for anifetch.
  */
 
 // ANSI Color & Style Helpers (supports NO_COLOR / dumb terminals)
@@ -7,13 +7,16 @@ const useColor = !process.env.NO_COLOR && process.stdout.isTTY !== false;
 
 export const c = {
   bold: (s) => (useColor ? `\x1b[1m${s}\x1b[0m` : String(s)),
-  dim: (s) => (useColor ? `\x1b[2m${s}\x1b[0m` : String(s)),
-  cyan: (s) => (useColor ? `\x1b[36m${s}\x1b[0m` : String(s)),
-  green: (s) => (useColor ? `\x1b[32m${s}\x1b[0m` : String(s)),
-  yellow: (s) => (useColor ? `\x1b[33m${s}\x1b[0m` : String(s)),
-  red: (s) => (useColor ? `\x1b[31m${s}\x1b[0m` : String(s)),
-  magenta: (s) => (useColor ? `\x1b[35m${s}\x1b[0m` : String(s)),
-  pink: (s) => (useColor ? `\x1b[38;2;255;105;180m${s}\x1b[0m` : String(s))
+  dim: (s) => (useColor ? `\x1b[38;2;160;140;175m${s}\x1b[0m` : String(s)),
+  hotPink: (s) => (useColor ? `\x1b[38;2;255;40;130m\x1b[1m${s}\x1b[0m` : String(s)),
+  pink: (s) => (useColor ? `\x1b[38;2;255;75;150m${s}\x1b[0m` : String(s)),
+  rose: (s) => (useColor ? `\x1b[38;2;255;125;175m${s}\x1b[0m` : String(s)),
+  sakura: (s) => (useColor ? `\x1b[38;2;255;182;205m${s}\x1b[0m` : String(s)),
+  lavender: (s) => (useColor ? `\x1b[38;2;220;175;245m${s}\x1b[0m` : String(s)),
+  coral: (s) => (useColor ? `\x1b[38;2;255;150;170m${s}\x1b[0m` : String(s)),
+  white: (s) => (useColor ? `\x1b[1m\x1b[37m${s}\x1b[0m` : String(s)),
+  green: (s) => (useColor ? `\x1b[38;2;255;105;180m${s}\x1b[0m` : String(s)), // stylized pink checkmark
+  red: (s) => (useColor ? `\x1b[38;2;255;60;100m\x1b[1m${s}\x1b[0m` : String(s))
 };
 
 const ASCII_BANNER = [
@@ -26,16 +29,16 @@ const ASCII_BANNER = [
 ];
 
 /**
- * Prints the big ANIFETCH banner with a smooth pink/magenta gradient.
+ * Prints the big ANIFETCH banner with a smooth 2D pink/sakura gradient.
  */
 export function printBanner() {
   if (!useColor) {
     console.log(ASCII_BANNER.join("\n"));
-    console.log("  Fast AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, MD)\n");
+    console.log("  Fast AniList Data Fetcher & Multi-Format Exporter\n");
     return;
   }
 
-  // Render 2D smooth pink gradient (from vivid neon pink to soft sakura pink)
+  // Render 2D smooth pink gradient (from neon magenta-pink to soft sakura pastel)
   for (let row = 0; row < ASCII_BANNER.length; row++) {
     const line = ASCII_BANNER[row];
     let coloredLine = "";
@@ -51,22 +54,65 @@ export function printBanner() {
     console.log(coloredLine + "\x1b[0m");
   }
 
-  console.log(`  \x1b[38;2;255;150;200m⚡ Fast AniList Data Fetcher & Multi-Format Exporter\x1b[0m\n`);
+  console.log(`  \x1b[38;2;255;160;210m🌸 Fast AniList Data Fetcher & Multi-Format Exporter\x1b[0m\n`);
 }
 
 /**
- * Prints clean export confirmation and helpful example commands using generic <username>.
+ * Prints the pink-themed help guide.
+ */
+export function printPinkHelp(version = "1.0.0") {
+  console.log(`
+${c.hotPink("USAGE:")}
+  ${c.rose("anifetch")}                                    ${c.dim("Open interactive mode")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.dim("[options]")}              ${c.dim("Fetch profile data")}
+  ${c.rose("npx anifetch")} ${c.sakura("<username>")} ${c.dim("[options]")}          ${c.dim("Run via npx directly")}
+
+${c.hotPink("EXAMPLES:")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")}                    ${c.dim("Fetch full profile & export to JSON")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.lavender("--completed --json")} ${c.dim("Export only completed anime to JSON")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.lavender("--all --csv")}        ${c.dim("Export all anime to CSV spreadsheet")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.lavender("--dropped --txt")}    ${c.dim("Export dropped anime to plain text")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.lavender("-f all")}             ${c.dim("Export to JSON, CSV, TXT & Markdown")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.lavender("--min-score 85")}     ${c.dim("Export only anime rated 85+")}
+  ${c.rose("anifetch")} ${c.sakura("<username>")} ${c.lavender("--json-stdout")}      ${c.dim("Stream pure JSON to stdout / jq")}
+  ${c.rose("anifetch")} ${c.lavender("--demo")}                        ${c.dim("Test data fetch with sample demo profile")}
+
+${c.hotPink("OPTIONS & FLAGS:")}
+  ${c.rose("-u, --username <name>")}    ${c.dim("AniList username to fetch (or pass as first argument)")}
+  ${c.rose("-s, --status <status>")}    ${c.dim("Filter status: completed, watching, dropped, paused, planning, all (default: all)")}
+  ${c.rose("-f, --format <format>")}    ${c.dim("Export format: json, csv, txt, md, all (default: json)")}
+  ${c.rose("-o, --output <dir>")}       ${c.dim("Destination folder for files (default: ./anifetch-output)")}
+  ${c.rose("-d, --demo")}               ${c.dim("Run test with sample demo profile (no internet required)")}
+  ${c.rose("--min-score <number>")}     ${c.dim("Filter anime by minimum rating (e.g. --min-score 80)")}
+  ${c.rose("--genre <genre>")}          ${c.dim("Filter anime by genre (e.g. --genre Action)")}
+  ${c.rose("--sort <field>")}           ${c.dim("Sort by: score, title, episodes, date, popularity")}
+  ${c.rose("--order <asc|desc>")}       ${c.dim("Sort order: asc or desc (default: desc)")}
+  ${c.rose("--json-stdout")}            ${c.dim("Output pure JSON to stdout (disables banner and file writes)")}
+  ${c.rose("-q, --quiet")}              ${c.dim("Quiet mode (suppress terminal messages)")}
+  ${c.rose("-v, --version")}            ${c.dim("Show version number")}
+  ${c.rose("-h, --help")}               ${c.dim("Show this help guide")}
+
+${c.hotPink("SHORTHAND SWITCHES:")}
+  ${c.lavender("--completed")}, ${c.lavender("--watching")}, ${c.lavender("--dropped")}, ${c.lavender("--paused")}, ${c.lavender("--planning")}, ${c.lavender("--all")}
+  ${c.lavender("--json")}, ${c.lavender("--csv")}, ${c.lavender("--txt")}, ${c.lavender("--md")}
+
+${c.sakura("🌸 Run 'anifetch <username>' to fetch your data or 'anifetch' to start interactive mode.")}
+`);
+}
+
+/**
+ * Prints clean export confirmation and helpful example commands with the pink theme.
  */
 export function printExportSummary(exportedFiles, outputDir) {
   if (!exportedFiles || exportedFiles.length === 0) return;
 
   const filenames = exportedFiles.map(f => f.split(/[\\/]/).pop()).join(", ");
-  console.log(`${c.green("✔")} ${c.bold("Exported to:")} ${c.yellow(outputDir)} ${c.dim(`(${filenames})`)}`);
+  console.log(`🌸 ${c.bold("Exported to:")} ${c.sakura(outputDir)} ${c.dim(`(${filenames})`)}`);
 
-  console.log(`\n${c.bold("EXAMPLES:")}`);
-  console.log(`  ${c.green("anifetch <username> --completed --json")}    ${c.dim("Export completed anime to JSON")}`);
-  console.log(`  ${c.green("anifetch <username> --all --csv")}           ${c.dim("Export all anime to spreadsheet")}`);
-  console.log(`  ${c.green("anifetch <username> -f all")}                ${c.dim("Export to JSON, CSV, TXT & Markdown")}`);
+  console.log(`\n${c.hotPink("EXAMPLES:")}`);
+  console.log(`  ${c.rose("anifetch <username> --completed --json")}    ${c.dim("Export completed anime to JSON")}`);
+  console.log(`  ${c.rose("anifetch <username> --all --csv")}           ${c.dim("Export all anime to spreadsheet")}`);
+  console.log(`  ${c.rose("anifetch <username> -f all")}                ${c.dim("Export to JSON, CSV, TXT & Markdown")}`);
 
-  console.log(`\n${c.pink("👉 Run 'anifetch --help' to see all options, filters & formats.")}\n`);
+  console.log(`\n${c.sakura("🌸 Run 'anifetch --help' to see all options, filters & formats.")}\n`);
 }

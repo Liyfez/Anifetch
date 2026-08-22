@@ -18,29 +18,29 @@
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?style=flat-square)](https://nodejs.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](#)
 
-*Extract, filter, and export your entire AniList anime collection into **JSON**, **CSV** (Excel/Sheets), **TXT**, and **Markdown** with automated rating analysis.*
+*Extract, filter, and export your entire AniList anime collection into **JSON**, **CSV** (Excel/Sheets), **TXT**, and **Markdown**.*
 
 </div>
 
 ---
 
-## ⚡ Instant Run (No Install Needed)
+## ⚡ How to Open the Tool
 
-Run directly with `npx`:
-
-```bash
-npx anifetch <username>
-```
-
-Or install globally:
+### 1. Interactive Mode (Just open the tool!)
+Simply run `anifetch` with no arguments to launch the interactive prompt:
 
 ```bash
-npm install -g anifetch
+npx anifetch
 ```
+Or if installed globally:
+```bash
+anifetch
+```
+*It will ask you for your AniList username, preferred format, and status filter interactively!*
 
 ---
 
-## 🚀 How to Fetch & Export Data
+## 🚀 Direct Command Line Usage
 
 ```bash
 # 1. Fetch entire anime list and export to JSON
@@ -82,22 +82,23 @@ anifetch --demo
   ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║
   ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║
   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
-  ⚡ Fast AniList Data Fetcher & Multi-Format Exporter
+  🌸 Fast AniList Data Fetcher & Multi-Format Exporter
 
 [*] Fetching AniList collection for '<username>'...
-✔ Exported to: ./anifetch-output (<username>_anime_list.json, <username>_deep_analysis.json)
+
+🌸 Exported to: ./anifetch-output (<username>_anime_list.json, <username>_deep_analysis.json)
 
 EXAMPLES:
   anifetch <username> --completed --json    Export completed anime to JSON
   anifetch <username> --all --csv           Export all anime to spreadsheet
   anifetch <username> -f all                Export to JSON, CSV, TXT & Markdown
 
-👉 Run 'anifetch --help' to see all options, filters & formats.
+🌸 Run 'anifetch --help' to see all options, filters & formats.
 ```
 
 ---
 
-## 📁 Generated Output Formats
+## 📁 Output Formats
 
 | Format | Flag | Output Files | Description |
 | :--- | :--- | :--- | :--- |
@@ -113,8 +114,9 @@ EXAMPLES:
 
 ```text
 USAGE:
-  anifetch <username> [options]
-  npx anifetch <username> [options]
+  anifetch                                    Open interactive mode
+  anifetch <username> [options]              Fetch profile data
+  npx anifetch <username> [options]          Run via npx directly
 
 OPTIONS & FLAGS:
   -u, --username <name>    AniList username to fetch (or pass as first argument)
@@ -138,7 +140,7 @@ SHORTHAND SWITCHES:
 
 ---
 
-## 🧪 Tests
+## 🧪 Running Tests
 
 ```bash
 npm test
