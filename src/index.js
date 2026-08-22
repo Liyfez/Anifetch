@@ -8,20 +8,29 @@ import { exportJson } from "./exporters/json.js";
 import { exportCsv } from "./exporters/csv.js";
 import { exportTxt } from "./exporters/txt.js";
 import { exportMarkdown } from "./exporters/markdown.js";
+import { MOCK_DEMO_COLLECTION } from "./demo_data.js";
 
 /**
  * Fetches, parses, analyzes and optionally exports AniList profile data.
- * @param {string} username - AniList username
+ * @param {string} username - AniList username (or 'demo' / pass options.demo = true)
  * @param {object} [options] - Configuration & export options
  * @returns {Promise<{parsed: object, analysis: object, exportedFiles: string[]}>}
  */
 export async function anifetch(username, options = {}) {
-  if (!username) {
-    throw new Error("AniList username is required.");
-  }
+  const isDemo = options.demo || username === "demo" || username === "--demo";
 
-  // 1. Fetch
-  const rawCollection = await fetchAniListCollection(username, options);
+  let rawCollection;
+  let targetUsername = username;
+
+  if (isDemo) {
+    rawCollection = MOCK_DEMO_COLLECTION;
+    targetUsername = "AnimeEnthusiast (Demo)";
+  } else {
+    if (!username) {
+      throw new Error("AniList username is required. Usage: anifetch <username> (e.g. anifetch Toru or anifetch --demo)");
+    }
+    rawCollection = await fetchAniListCollection(username, options);
+  }
 
   // 2. Parse & filter
   const parsed = parseAniListCollection(rawCollection, {
@@ -44,21 +53,22 @@ export async function anifetch(username, options = {}) {
       : (options.format || "json").split(",").map(f => f.trim().toLowerCase());
 
     const isAll = formats.includes("all");
+    const safeUser = isDemo ? "demo_user" : username;
 
     if (isAll || formats.includes("json")) {
-      const files = await exportJson(parsed, analysis, options.outputDir, username);
+      const files = await exportJson(parsed, analysis, options.outputDir, safeUser);
       exportedFiles.push(...files);
     }
     if (isAll || formats.includes("csv")) {
-      const files = await exportCsv(parsed, analysis, options.outputDir, username);
+      const files = await exportCsv(parsed, analysis, options.outputDir, safeUser);
       exportedFiles.push(...files);
     }
     if (isAll || formats.includes("txt")) {
-      const files = await exportTxt(parsed, analysis, options.outputDir, username);
+      const files = await exportTxt(parsed, analysis, options.outputDir, safeUser);
       exportedFiles.push(...files);
     }
     if (isAll || formats.includes("md") || formats.includes("markdown")) {
-      const files = await exportMarkdown(parsed, analysis, options.outputDir, username);
+      const files = await exportMarkdown(parsed, analysis, options.outputDir, safeUser);
       exportedFiles.push(...files);
     }
   }
@@ -73,5 +83,6 @@ export {
   exportJson,
   exportCsv,
   exportTxt,
-  exportMarkdown
+  exportMarkdown,
+  MOCK_DEMO_COLLECTION
 };

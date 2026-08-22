@@ -1,5 +1,14 @@
 <div align="center">
 
+```
+   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗
+  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║
+  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║
+  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║
+  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║
+  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
+```
+
 # 🎌 anifetch
 
 **Fast AniList Profile Parser, Multi-Format Exporter & Deep Taste Analyzer CLI**
@@ -15,110 +24,221 @@
 
 ---
 
-## ⚡ Instant Run (No Installation Needed)
+## 📑 Table of Contents
 
-Run directly with `npx`:
+- [⚡ Instant Demo (Preview UI)](#-instant-demo-preview-ui)
+- [📦 Installation](#-installation)
+- [🚀 Command-Line Usage & Examples](#-command-line-usage--examples)
+- [📁 Supported Export Formats](#-supported-export-formats)
+- [📊 Terminal UI Preview](#-terminal-ui-preview)
+- [🧠 Deep Taste Analytics Engine](#-deep-taste-analytics-engine)
+- [🛠️ CLI Options Reference](#️-cli-options-reference)
+- [💻 Programmatic Node.js API](#-programmatic-nodejs-api)
+- [🔒 Security & Authentication](#-security--authentication)
+- [🧪 Running Tests](#-running-tests)
+- [📄 License](#-license)
+
+---
+
+## ⚡ Instant Demo (Preview UI)
+
+Want to see what `anifetch` looks like right now? Run the built-in demo mode (no username or internet needed):
 
 ```bash
-npx anifetch l1e
+npx anifetch --demo
 ```
 
-Or install globally:
+---
 
+## 📦 Installation
+
+### 1. Run without installing (Recommended)
+You can run `anifetch` directly on any machine using `npx`:
+
+```bash
+npx anifetch <username>
+```
+
+### 2. Install globally
 ```bash
 npm install -g anifetch
 ```
 
----
-
-## 🚀 Quick Usage Examples
-
+Then run it anywhere:
 ```bash
-# 1. Fetch entire profile and export to JSON
-anifetch l1e
+anifetch <username>
+```
 
-# 2. Export completed anime to JSON
-anifetch l1e --completed --json
-
-# 3. Export all anime to a spreadsheet (CSV)
-anifetch l1e --all --csv
-
-# 4. Export dropped anime to plain text report
-anifetch l1e --dropped --txt
-
-# 5. Export everything to all formats (JSON, CSV, TXT, Markdown) at once!
-anifetch l1e -f all
-
-# 6. Filter by score: Only anime rated 85+
-anifetch l1e --min-score 85 --csv
-
-# 7. Custom output folder
-anifetch l1e -f all -o ./my-profile-data
-
-# 8. Pipe pure JSON directly to jq or other CLI tools
-anifetch l1e --json-stdout | jq '.analysis.rating_statistics'
+### 3. Local Project Clone
+```bash
+git clone https://github.com/Liyfez/Anifetch.git
+cd Anifetch
+node bin/index.js <username>
 ```
 
 ---
 
-## 📊 Terminal Dashboard Preview
+## 🚀 Command-Line Usage & Examples
 
-```text
-========================================================================
-       🎌 ANIFETCH: Fast AniList Parser & Deep Taste Analyzer
-========================================================================
-[*] Fetching AniList collection for user: 'l1e'...
+### 1. Basic Profile Fetch
+Fetch any public AniList profile, render the terminal dashboard, and export structured JSON:
+```bash
+anifetch <username>
+```
+*(Example: `anifetch l1e`)*
 
-[+] User: l1e (ID: 7346382 | Score Format: POINT_10_DECIMAL)
-------------------------------------------------------------------------
-Total Anime: 199 | Episodes: 2931 | Watch Time: 49.57 days (1189.73 hrs) | Completion: 91.28%
+### 2. Filter by List Status
+Export only specific lists (`completed`, `watching`, `dropped`, `paused`, `planning`):
+```bash
+# Export only completed anime to JSON
+anifetch <username> --completed --json
 
---- STATUS BREAKDOWN ---
-  Completed    :  178 (89.45%) | ######################
-  Watching     :   13 ( 6.53%) | ##
-  Dropped      :    4 ( 2.01%) | #
-  Planning     :    4 ( 2.01%) | #
+# Export watching anime to CSV
+anifetch <username> --watching --csv
 
---- RATING & SCORE ANALYTICS ---
-  Rated Titles      : 180 / 199 (90.45%)
-  User Mean Score   : 90.31 / 100
-  User Median Score : 90 / 100
-  Std Deviation     : 8.44
-  Score Range       : 45 - 100
-  Rating Bias       : Generous (+11.73 above community average)
+# Export dropped anime to TXT
+anifetch <username> --dropped --txt
 
---- SCORE DISTRIBUTION TIERS ---
-  90-100 (Masterpiece) :  131 (72.78%) | ==================
-  80-89  (Great)       :   42 (23.33%) | ======
-  70-79  (Good)        :    2 ( 1.11%) | 
-  60-69  (Average)     :    4 ( 2.22%) | =
-  <50    (Poor)        :    1 ( 0.56%) | 
+# Or use standard flag syntax
+anifetch <username> -s completed -f json
+```
 
---- TOP HIGHER THAN COMMUNITY (PERSONAL FAVORITES) ---
-  * Initial D EXTRA STAGE 2            | My: 98 vs Comm: 71 (Delta: +27)
-  * MF Ghost                           | My: 99 vs Comm: 74 (Delta: +25)
-  * HELLO WORLD                        | My: 98 vs Comm: 73 (Delta: +25)
-  * JoJo no Kimyou na Bouken (2000)    | My: 95 vs Comm: 70 (Delta: +25)
-  * Blue Lock VS. U-20 JAPAN           | My: 99 vs Comm: 75 (Delta: +24)
+### 3. Export to Multiple Formats
+Generate spreadsheets, reports, and data files simultaneously:
+```bash
+# Export EVERYTHING to JSON, CSV, TXT, and Markdown all at once!
+anifetch <username> -f all
 
---- TOP LOWER THAN COMMUNITY (HARSH CRITIQUES) ---
-  * NHK ni Youkoso!                    | My: 45 vs Comm: 82 (Delta: -37)
-  * Cyberpunk: Edgerunners             | My: 68 vs Comm: 85 (Delta: -17)
-  * Grand Blue                         | My: 65 vs Comm: 82 (Delta: -17)
-  * Eiga Daisuki Pompo-san             | My: 65 vs Comm: 81 (Delta: -16)
+# Export entire anime list as an Excel/Google Sheets ready CSV
+anifetch <username> --all --csv
+
+# Export to a custom destination directory
+anifetch <username> -f all -o ./my-profile-reports
+```
+
+### 4. Advanced Score & Genre Filtering
+```bash
+# Filter anime rated 85+ and sort by score
+anifetch <username> --min-score 85 --sort score
+
+# Filter by genre
+anifetch <username> --genre Action --csv
+
+# Sort options: score, title, episodes, date, popularity
+anifetch <username> --sort episodes --order desc
+```
+
+### 5. Stream Pure JSON to Shell Scripts / Pipelines
+Pipe clean JSON directly to tools like `jq` without any banners or UI text:
+```bash
+anifetch <username> --json-stdout | jq '.analysis.rating_statistics'
 ```
 
 ---
 
 ## 📁 Supported Export Formats
 
-| Format | Option | Description | Output Files |
+When you export your profile, `anifetch` generates dedicated, structured files:
+
+| Format | Command Switch | Output Files | Description |
 | :--- | :--- | :--- | :--- |
-| **JSON** | `-f json` or `--json` | Clean structured list & complete statistical analysis. | `<user>_anime_list.json`<br>`<user>_deep_analysis.json` |
-| **CSV** | `-f csv` or `--csv` | Excel/Google Sheets ready CSVs for anime list, genres, and studios. | `<user>_anime_list.csv`<br>`<user>_genre_breakdown.csv`<br>`<user>_studio_breakdown.csv` |
-| **TXT** | `-f txt` or `--txt` | Human-readable plain text summary and formatted ASCII table. | `<user>_summary.txt` |
-| **Markdown** | `-f md` or `--md` | GitHub-flavored markdown report with tables and clickable links. | `<user>_analysis_report.md` |
-| **ALL** | `-f all` | Generates all 4 formats (7 files) in one command. | All of the above |
+| **JSON** | `-f json` / `--json` | `<user>_anime_list.json`<br>`<user>_deep_analysis.json` | Full machine-readable dataset including all titles, personal scores, progress, tags, studios, and complete statistical metrics. |
+| **CSV** | `-f csv` / `--csv` | `<user>_anime_list.csv`<br>`<user>_genre_breakdown.csv`<br>`<user>_studio_breakdown.csv` | Spreadsheets ready for Microsoft Excel, Apple Numbers, or Google Sheets with clean escaping and formulas. |
+| **TXT** | `-f txt` / `--txt` | `<user>_summary.txt` | Human-readable text report with status breakdowns, score histograms, hot takes, and a full ASCII table. |
+| **Markdown** | `-f md` / `--md` | `<user>_analysis_report.md` | GitHub-flavored Markdown report with formatted tables, score tiers, and direct AniList anime links. |
+| **ALL** | `-f all` | **All 7 files** | Generates all 4 formats in a single command. |
+
+---
+
+## 📊 Terminal UI Preview
+
+```text
+   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗
+  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║
+  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║
+  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║
+  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║
+  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
+
+  ⚡ Fast AniList Profile Parser, Exporter & Deep Taste Analyzer
+
+╭───────────────────────────────────────────────────────────────────╮
+│  👤 l1e                   ID: 7346382    Score Format: POINT_100 │
+╰───────────────────────────────────────────────────────────────────╯
+
+╭── 📊 CONSUMPTION & VOLUME METRICS ────────────────────────────────
+  • Total Anime Tracked  : 199 titles
+  • Total Episodes Watched: 2931 episodes
+  • Total Time Watched    : 49.57 days (1189.73 hrs / 71384 mins)
+  • List Completion Rate  : 91.28% [███████████████░ 91.3%]
+
+╭── 📁 LIST STATUS BREAKDOWN ───────────────────────────────────────
+  Completed    :  178 ( 89.5%) │ ██████████████████████
+  Watching     :   13 (  6.5%) │ ██
+  Dropped      :    4 (  2.0%) │ █
+  Planning     :    4 (  2.0%) │ █
+
+╭── 🎯 RATING & SCORE ANALYTICS ────────────────────────────────────
+  • Rated Titles        : 180 / 199 (90.45%)
+  • User Mean Score     : 90.31 / 100
+  • User Median Score   : 90 / 100
+  • Standard Deviation  : 8.44
+  • Score Range         : 45 (Min) ─── 100 (Max)
+  • Rating Tendency     : Generous (+11.73 above community average)
+
+╭── 📈 SCORE DISTRIBUTION TIERS ────────────────────────────────────
+  🏆 Masterpiece [90 - 100] :  131 ( 72.8%) │ ■■■■■■■■■■■■■■■■■■
+  🌟 Great       [80 - 89 ] :   42 ( 23.3%) │ ■■■■■■
+  👍 Good        [70 - 79 ] :    2 (  1.1%) │ 
+  👌 Average     [60 - 69 ] :    4 (  2.2%) │ ■
+  👎 Poor        [ < 50   ] :    1 (  0.6%) │ 
+
+╭── 🌟 PERSONAL HIDDEN GEMS (Loved More Than Community) ────────────
+  ★ Initial D EXTRA STAGE 2          │ My: 98 │ Comm: 71 │ Delta: +27
+  ★ MF Ghost                         │ My: 99 │ Comm: 74 │ Delta: +25
+  ★ HELLO WORLD                      │ My: 98 │ Comm: 73 │ Delta: +25
+  ★ JoJo no Kimyou na Bouken (2000)  │ My: 95 │ Comm: 70 │ Delta: +25
+
+╭── ⚡ HARSHEST CRITIQUES (Rated Lower Than Community) ─────────────
+  ⚡ NHK ni Youkoso!                  │ My: 45 │ Comm: 82 │ Delta: -37
+  ⚡ Cyberpunk: Edgerunners           │ My: 68 │ Comm: 85 │ Delta: -17
+  ⚡ Grand Blue                       │ My: 65 │ Comm: 82 │ Delta: -17
+
+╭── 🎭 TOP FAVORITE GENRES (Ranked by Average Score) ───────────────
+  • Horror           │ Rated:  9 titles │ My Avg: 93.44 │ Comm Avg: 79.7
+  • Adventure        │ Rated: 52 titles │ My Avg: 92.96 │ Comm Avg: 80.39
+  • Fantasy          │ Rated: 29 titles │ My Avg: 92.69 │ Comm Avg: 80.23
+
+╭── 🏢 MOST WATCHED ANIMATION STUDIOS ──────────────────────────────
+  • MADHOUSE             │ Titles: 18 │ Episodes:  575 │ My Avg: 92.94
+  • Kyoto Animation      │ Titles: 15 │ Episodes:  111 │ My Avg: 87.92
+  • Studio Ghibli        │ Titles: 10 │ Episodes:   10 │ My Avg: 96.8
+```
+
+---
+
+## 🧠 Deep Taste Analytics Engine
+
+`anifetch` goes far beyond simple listing by performing automated statistical analysis:
+
+1. **Volume & Engagement**:
+   - Total episodes watched across all anime (including rewatch multipliers).
+   - Watch time accurately converted to minutes, hours, and days.
+   - List completion percentage.
+
+2. **Rating Profile & Stringency**:
+   - Calculates Mean, Median, Standard Deviation, and full Score Range.
+   - Automatically determines whether you are a **Generous**, **Critical**, or **Balanced** reviewer relative to the AniList community average.
+
+3. **Community Hot Takes & Divergences**:
+   - **Personal Gems**: Titles you rated significantly higher than the global AniList community ($\ge +10$ delta).
+   - **Harshest Judgments**: Titles you scored significantly lower than the community consensus ($\le -10$ delta).
+
+4. **Genre & Studio Insights**:
+   - Watch volume, average score, community delta, and completion rate calculated for every individual genre and studio.
+
+5. **Drop Friction Analysis**:
+   - Tracks the exact episode and percentage mark at which you drop shows.
 
 ---
 
@@ -126,59 +246,78 @@ Total Anime: 199 | Episodes: 2931 | Watch Time: 49.57 days (1189.73 hrs) | Compl
 
 ```text
 USAGE:
-  anifetch [username] [options]
+  anifetch <username> [options]
   npx anifetch <username> [options]
+  anifetch --demo (Preview UI with sample data)
 
-OPTIONS:
-  -u, --username <name>     AniList username (or pass as first positional argument)
-  -s, --status <status>     Filter list status: completed, watching, dropped, paused, planning, all (default: all)
-  -f, --format <format>     Export format(s): json, csv, txt, md, all (default: json)
-  -o, --output <dir>        Output directory for exported files (default: ./anifetch-output)
-  --no-export               Run analysis and print dashboard without writing files to disk
-  --min-score <number>      Filter anime with rating >= score (e.g. --min-score 80)
-  --genre <genre>           Filter anime by genre (e.g. --genre Action)
-  --sort <field>            Sort by: score, title, episodes, date, popularity (default: score)
-  --order <asc|desc>        Sort order: asc or desc (default: desc)
-  --json-stdout             Output pure JSON to stdout (disables UI and file writes)
-  -q, --quiet               Quiet mode (suppress terminal dashboard)
-  -v, --version             Show version number
-  -h, --help                Show help message
+OPTIONS & FLAGS:
+  -u, --username <name>    AniList username to fetch (or pass as first argument)
+  -s, --status <status>    Filter status: completed, watching, dropped, paused, planning, all (default: all)
+  -f, --format <format>    Export format(s): json, csv, txt, md, all (default: json)
+  -o, --output <dir>       Directory to save exported files (default: ./anifetch-output)
+  -d, --demo               Run with rich sample demo data to test the UI instantly
+  --no-export              Display terminal dashboard without writing files to disk
+  --min-score <number>     Filter anime with rating >= score (e.g. --min-score 80)
+  --genre <genre>          Filter anime by genre (e.g. --genre Action)
+  --sort <field>           Sort by: score, title, episodes, date, popularity (default: score)
+  --order <asc|desc>       Sort order: asc or desc (default: desc)
+  --json-stdout            Output pure JSON to stdout (disables dashboard and file writes)
+  -q, --quiet              Quiet mode (suppress terminal banner and dashboard)
+  -v, --version            Show version number
+  -h, -help, --help        Show this help guide
 
 SHORTHAND SWITCHES:
-  --completed               Filter: status = completed
-  --watching                Filter: status = watching
-  --dropped                 Filter: status = dropped
-  --paused                  Filter: status = paused
-  --planning                Filter: status = planning
-  --all                     Filter: status = all
-  --json                    Export format: json
-  --csv                     Export format: csv
-  --txt                     Export format: txt
-  --md                      Export format: md
+  --completed              Filter: status = completed
+  --watching               Filter: status = watching
+  --dropped                Filter: status = dropped
+  --paused                 Filter: status = paused
+  --planning               Filter: status = planning
+  --all                    Filter: status = all (default)
+  --json                   Format: json
+  --csv                    Format: csv
+  --txt                    Format: txt
+  --md                     Format: markdown
 ```
 
 ---
 
 ## 💻 Programmatic Node.js API
 
-You can also use `anifetch` inside your own Node.js applications:
+You can easily integrate `anifetch` into your own Node.js backends, Discord/Telegram bots, or web applications:
 
 ```javascript
 import { anifetch } from "anifetch";
 
+// Fetch and analyze any profile
 const result = await anifetch("l1e", {
   status: "completed",
   format: "all",
   outputDir: "./output"
 });
 
-console.log(`Mean score: ${result.analysis.rating_statistics.user_mean_score}`);
-console.log(`Exported files:`, result.exportedFiles);
+console.log("Username:", result.parsed.user.name);
+console.log("Total Completed:", result.parsed.total_anime_count);
+console.log("Mean Score:", result.analysis.rating_statistics.user_mean_score);
+console.log("Top Loved Anime:", result.analysis.community_divergence.top_user_higher_than_community[0]);
+console.log("Exported Files:", result.exportedFiles);
 ```
 
 ---
 
+## 🔒 Security & Authentication
+
+- **Zero Secrets**: `anifetch` requires **no private API secrets or credentials**. It securely queries AniList's public GraphQL endpoint.
+- **Private Lists**: If you want to fetch your private lists, you can optionally provide an environment variable without modifying code:
+  ```bash
+  export ANILIST_TOKEN="your_personal_access_token"
+  anifetch <username>
+  ```
+
+---
+
 ## 🧪 Running Tests
+
+Run the built-in automated test suite:
 
 ```bash
 npm test

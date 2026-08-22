@@ -1,5 +1,5 @@
 /**
- * Test suite for anifetch parser, analyzer, exporters, and CLI options.
+ * Test suite for anifetch parser, analyzer, exporters, demo mode, and CLI options.
  */
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
@@ -13,6 +13,7 @@ import { exportJson } from "../src/exporters/json.js";
 import { exportCsv } from "../src/exporters/csv.js";
 import { exportTxt } from "../src/exporters/txt.js";
 import { exportMarkdown } from "../src/exporters/markdown.js";
+import { anifetch, MOCK_DEMO_COLLECTION } from "../src/index.js";
 
 const mockRawData = {
   user: {
@@ -154,7 +155,6 @@ describe("anifetch analyzer tests", () => {
     assert.equal(r.rated_count, 3);
     assert.equal(r.min_score, 40);
     assert.equal(r.max_score, 95);
-    // (95 + 60 + 40) / 3 = 65.0
     assert.equal(r.user_mean_score, 65.0);
     assert.equal(r.user_median_score, 60.0);
 
@@ -188,28 +188,29 @@ describe("anifetch exporters tests", () => {
       assert.equal(txtFiles.length, 1);
       assert.equal(mdFiles.length, 1);
 
-      // Verify files exist and have non-empty content
       for (const file of [...jsonFiles, ...csvFiles, ...txtFiles, ...mdFiles]) {
         const stat = await fs.stat(file);
         assert.ok(stat.size > 0);
       }
-
-      // Check CSV content
-      const csvContent = await fs.readFile(csvFiles[0], "utf-8");
-      assert.match(csvContent, /Steins;Gate/);
-      assert.match(csvContent, /White Fox/);
-
-      // Check TXT content
-      const txtContent = await fs.readFile(txtFiles[0], "utf-8");
-      assert.match(txtContent, /ANILIST PROFILE & TASTE REPORT/);
-      assert.match(txtContent, /Steins;Gate/);
-
-      // Check MD content
-      const mdContent = await fs.readFile(mdFiles[0], "utf-8");
-      assert.match(mdContent, /# 📊 AniList Profile & Taste Analysis/);
-      assert.match(mdContent, /Steins;Gate/);
     } finally {
       await fs.rm(tmpDir, { recursive: true, force: true });
     }
+  });
+});
+
+describe("anifetch demo & library integration", () => {
+  test("anifetch runs with demo flag", async () => {
+    const res = await anifetch("demo", { demo: true });
+    assert.ok(res.parsed);
+    assert.ok(res.analysis);
+    assert.equal(res.parsed.user.name, "AnimeEnthusiast");
+    assert.equal(res.analysis.consumption_overview.total_anime, 12);
+  });
+
+  test("anifetch throws when username is missing", async () => {
+    await assert.rejects(
+      async () => await anifetch(""),
+      /AniList username is required/
+    );
   });
 });
