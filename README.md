@@ -27,7 +27,7 @@
 ## ⚡ How to Open the Tool
 
 ### 1. Interactive Mode (Just open the tool!)
-Simply run `anifetch` with no arguments to launch the interactive prompt:
+Simply run `anifetch` with no arguments to launch interactive mode:
 
 ```bash
 npx anifetch
@@ -36,7 +36,7 @@ Or if installed globally:
 ```bash
 anifetch
 ```
-*It will ask you for your AniList username, preferred format, and status filter interactively!*
+*(For all options and flags, run `anifetch --help`)*
 
 ---
 

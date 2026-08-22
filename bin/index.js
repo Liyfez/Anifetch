@@ -119,7 +119,7 @@ function parseCliArgs(args) {
 
 async function runInteractiveMode() {
   printBanner();
-  console.log(`${c.sakura("🌸 Welcome to anifetch interactive mode!")}\n`);
+  console.log(`${c.sakura("🌸 For help and CLI options, run:")} ${c.hotPink("anifetch --help")}\n`);
 
   const rl = readline.createInterface({ input, output });
 
