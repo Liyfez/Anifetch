@@ -168,7 +168,7 @@ async function runInteractiveMode() {
   try {
     while (true) {
       if (step === 1) {
-        const { text, escaped } = await ask(`${c.hotPink("? Enter AniList username:")} `);
+        const { text, escaped } = await ask(`${c.hotPink("🌸 Username or command:")} `);
         if (escaped) {
           console.log(`\n${c.sakura("🌸 Exited anifetch. Goodbye!")}\n`);
           break;
@@ -176,7 +176,7 @@ async function runInteractiveMode() {
 
         const inputStr = (text || "").trim();
         if (!inputStr) {
-          console.log(`\n${c.red("❌ Username cannot be empty. Please enter a valid AniList username.")}\n`);
+          console.log(`\n${c.red("❌ Username cannot be empty. Please enter an AniList username.")}\n`);
           continue;
         }
 
@@ -223,7 +223,7 @@ async function runInteractiveMode() {
         state.username = inputStr;
         step = 2;
       } else if (step === 2) {
-        const { text, escaped } = await ask(`${c.hotPink("? Export format")} ${c.dim("[json / csv / txt / md / all] (default: json) [ESC to back]:")} `);
+        const { text, escaped } = await ask(`${c.hotPink("🌸 Export format")} ${c.dim("[json / csv / txt / md / all] (default: json) [ESC to back]:")} `);
         if (escaped) {
           console.log(`\n${c.dim("↩ Back to username")}\n`);
           step = 1;
@@ -234,7 +234,7 @@ async function runInteractiveMode() {
         state.format = f;
         step = 3;
       } else if (step === 3) {
-        const { text, escaped } = await ask(`${c.hotPink("? Filter status")} ${c.dim("[all / completed / watching / dropped / planning] (default: all) [ESC to back]:")} `);
+        const { text, escaped } = await ask(`${c.hotPink("🌸 Filter status")} ${c.dim("[all / completed / watching / dropped / planning] (default: all) [ESC to back]:")} `);
         if (escaped) {
           console.log(`\n${c.dim("↩ Back to format")}\n`);
           step = 2;
@@ -272,7 +272,7 @@ async function runInteractiveMode() {
           continue;
         }
 
-        const { text: anotherText } = await ask(`${c.hotPink("? Fetch another profile?")} ${c.dim("(y/N):")} `);
+        const { text: anotherText } = await ask(`${c.hotPink("🌸 Fetch another profile?")} ${c.dim("(y/N):")} `);
         if (anotherText && (anotherText.trim().toLowerCase() === "y" || anotherText.trim().toLowerCase() === "yes")) {
           step = 1;
           state = { username: "", format: "json", status: "all", extraArgs: {} };

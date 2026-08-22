@@ -84,9 +84,15 @@ anifetch --demo
   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
   🌸 Fast AniList Data Fetcher & Multi-Format Exporter
 
+🌸 For help and CLI options, run: anifetch --help
+
+🌸 Username or command: <username>
+🌸 Export format [json / csv / txt / md / all] (default: json) [ESC to back]: all
+🌸 Filter status [all / completed / watching / dropped / planning] (default: all) [ESC to back]: all
+
 [*] Fetching AniList collection for '<username>'...
 
-🌸 Exported to: ./anifetch-output (<username>_anime_list.json, <username>_deep_analysis.json)
+🌸 Exported to: C:\Users\...\anifetch-output (<username>_anime_list.json, <username>_deep_analysis.json)
 
 EXAMPLES:
   anifetch <username> --completed --json    Export completed anime to JSON
