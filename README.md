@@ -7,7 +7,7 @@
 </p>
 
 [![Website](https://img.shields.io/badge/Website-liyfez.github.io%2FAnifetch-ff69b4?style=flat-square&logo=google-chrome&logoColor=white)](https://liyfez.github.io/Anifetch/)
-[![npm version](https://img.shields.io/npm/v/anifetch.svg?color=ff69b4&style=flat-square)](https://www.npmjs.com/package/anifetch)
+[![npm version](https://img.shields.io/npm/v/@l1e/anifetch.svg?color=ff69b4&style=flat-square)](https://www.npmjs.com/package/@l1e/anifetch)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?style=flat-square)](https://nodejs.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](#)
