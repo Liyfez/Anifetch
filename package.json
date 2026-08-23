@@ -1,12 +1,11 @@
 {
   "name": "@l1e/anifetch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fast AniList profile parser, multi-format exporter (JSON, CSV, TXT, Markdown), and deep taste analyzer CLI tool.",
   "main": "src/index.js",
   "type": "module",
   "bin": {
-    "anifetch": "bin/index.js",
-    "@l1e/anifetch": "bin/index.js"
+    "anifetch": "./bin/index.js"
   },
   "scripts": {
     "start": "node bin/index.js",

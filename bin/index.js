@@ -9,7 +9,7 @@ import readline from "node:readline";
 import { anifetch } from "../src/index.js";
 import { printBanner, printPinkHelp, printExportSummary, c } from "../src/ui.js";
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 
 // Handle stdout broken pipe gracefully (e.g. anifetch l1e --json-stdout | head -n 10)
 process.stdout.on("error", (err) => {
