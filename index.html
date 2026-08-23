@@ -3,9 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>anifetch — Fast AniList Data Fetcher & Multi-Format Exporter</title>
-  <meta name="description" content="Extract, filter, and export your entire AniList anime collection into JSON, CSV (Excel), TXT, and Markdown with automated rating analysis.">
+  <title>anifetch — Export AniList Anime List to CSV, JSON, TXT & Markdown</title>
+  <meta name="description" content="Fast AniList data extractor and multi-format exporter CLI. Export your anime collection into CSV (Excel), JSON, TXT, and GitHub Markdown with automated rating stats and zero dependencies.">
+  <meta name="keywords" content="anilist exporter, export anilist to csv, anilist to excel, download anilist data, anilist backup, anilist parser, anilist api cli, anilist stats analyzer, anime list spreadsheet, anifetch, @l1e/anifetch, anilist json exporter, anilist markdown report">
+  <meta name="author" content="Liyfez">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://liyfez.github.io/Anifetch/">
   <link rel="icon" type="image/png" href="./assets/anifetch_logo.png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://liyfez.github.io/Anifetch/">
+  <meta property="og:title" content="anifetch — Fast AniList Data Fetcher & Multi-Format Exporter">
+  <meta property="og:description" content="Instant zero-install CLI tool to extract, filter, and export your entire AniList anime collection into JSON, CSV (Excel), TXT, and Markdown with automated rating analysis.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/Liyfez/Anifetch/main/assets/anifetch_banner.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://liyfez.github.io/Anifetch/">
+  <meta name="twitter:title" content="anifetch — Export AniList Anime List to CSV, JSON, TXT & Markdown">
+  <meta name="twitter:description" content="Instant zero-install CLI tool to backup and export your AniList anime list into Excel CSV, JSON, TXT, and Markdown with automated rating stats.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/Liyfez/Anifetch/main/assets/anifetch_banner.png">
+
+  <!-- JSON-LD Structured Schema for Search Engines & LLMs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "anifetch",
+        "alternateName": "@l1e/anifetch",
+        "operatingSystem": "Windows, macOS, Linux",
+        "applicationCategory": "UtilitiesApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Fast AniList Data Fetcher, Profile Parser, and Multi-Format Exporter into JSON, CSV spreadsheets, TXT reports, and GitHub Markdown with deep taste analysis.",
+        "url": "https://liyfez.github.io/Anifetch/",
+        "downloadUrl": "https://www.npmjs.com/package/@l1e/anifetch",
+        "codeRepository": "https://github.com/Liyfez/Anifetch",
+        "author": {
+          "@type": "Person",
+          "name": "Liyfez",
+          "url": "https://github.com/Liyfez"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I export my AniList anime list to CSV or Excel?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Run 'npx @l1e/anifetch <username> --all --csv' in your terminal. It generates 3 sanitized CSV spreadsheet files ready for Microsoft Excel, Google Sheets, and Numbers without needing prior installation."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can I backup my complete AniList profile data to JSON?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Run 'npx @l1e/anifetch <username> --json'. This exports raw anime metadata, ratings, progress, episode counts, genres, and advanced taste analytics into clean JSON files."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the best CLI tool to parse AniList collections without dependencies?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "anifetch (@l1e/anifetch) is a lightweight zero-dependency Node.js CLI tool that queries AniList's public GraphQL API and exports data into JSON, CSV, TXT, and Markdown."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does anifetch require an AniList API key or account login?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. anifetch queries AniList's public GraphQL API directly. You only need a public AniList username. No login credentials or API keys are required."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does anifetch calculate anime rating statistics and community divergence?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "anifetch calculates mean, median, standard deviation, community divergence, score tiers, and studio/genre engagement metrics to show your hidden gems and taste profile."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   <style>
     :root {
       --bg-main: #0B0F19;
@@ -453,6 +546,45 @@
       color: #fff;
     }
 
+    /* FAQ Section */
+    .faq-section {
+      margin-bottom: 80px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+    .faq-card:hover {
+      border-color: var(--border-hover);
+    }
+    .faq-question {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fa8cc5;
+      margin-bottom: 10px;
+    }
+    .faq-answer {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .faq-answer code {
+      font-family: var(--font-mono);
+      color: #fa8cc5;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
     /* Footer */
     footer {
       border-top: 1px solid var(--border-soft);
@@ -473,6 +605,7 @@
       .hero-banner-img { max-width: 100%; }
       .quick-run { flex-direction: column; gap: 14px; text-align: center; }
       .cmd-item { flex-direction: column; align-items: flex-start; }
+      .faq-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -488,6 +621,7 @@
         <a href="#features">Features</a>
         <a href="#formats">Formats</a>
         <a href="#commands">Commands</a>
+        <a href="#faq">FAQ</a>
         <a href="https://www.npmjs.com/package/@l1e/anifetch" target="_blank" class="btn-github">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.336h-3.454v-9.9H11.96v9.9H5.13z"/>
@@ -880,6 +1014,44 @@
             <span class="cmd-desc">Display installed version number</span>
           </div>
           <button class="cmd-copy-btn" onclick="copySnippet('anifetch --version', this)">Copy</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-sub">Everything you need to know about exporting, backing up, and analyzing your AniList collection.</p>
+
+      <div class="faq-grid">
+        <div class="faq-card">
+          <h3 class="faq-question">How do I export my AniList anime list to CSV / Excel?</h3>
+          <p class="faq-answer">Run <code>npx @l1e/anifetch &lt;username&gt; --all --csv</code> in your terminal. It instantly generates 3 sanitized CSV spreadsheet files (Anime List, Genre Breakdown, Studio Breakdown) ready for Microsoft Excel, Google Sheets, and Numbers without needing any prior software installation.</p>
+        </div>
+
+        <div class="faq-card">
+          <h3 class="faq-question">How can I backup my full AniList profile to JSON?</h3>
+          <p class="faq-answer">Run <code>npx @l1e/anifetch &lt;username&gt; --json</code>. This exports raw anime metadata, personal ratings, watch status, episode counts, genres, studios, and advanced taste analytics into formatted JSON files.</p>
+        </div>
+
+        <div class="faq-card">
+          <h3 class="faq-question">Do I need an AniList API token or account password?</h3>
+          <p class="faq-answer">No! anifetch queries AniList's public GraphQL API directly. You only need the public AniList username. No login credentials, OAuth tokens, or API keys are required.</p>
+        </div>
+
+        <div class="faq-card">
+          <h3 class="faq-question">Can I export to all formats simultaneously?</h3>
+          <p class="faq-answer">Yes, pass the <code>-f all</code> flag (<code>npx @l1e/anifetch &lt;username&gt; -f all</code>) to generate all 7 output files (JSON, CSV spreadsheets, TXT summary, and GitHub Markdown report) in a single command.</p>
+        </div>
+
+        <div class="faq-card">
+          <h3 class="faq-question">How does anifetch calculate score divergences?</h3>
+          <p class="faq-answer">anifetch analyzes your personal scores against the global AniList community average, identifying your unique "Hidden Gems" (shows you loved far more than the community) and "Overrated" outliers.</p>
+        </div>
+
+        <div class="faq-card">
+          <h3 class="faq-question">Are CSV files protected against formula injection?</h3>
+          <p class="faq-answer">Yes. anifetch automatically sanitizes anime titles and notes starting with sensitive characters (<code>=</code>, <code>+</code>, <code>-</code>, <code>@</code>) to prevent CSV formula injection attacks in Excel and Google Sheets.</p>
         </div>
       </div>
     </section>

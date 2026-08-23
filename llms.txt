@@ -1,0 +1,47 @@
+# anifetch (@l1e/anifetch)
+
+> Fast AniList Data Fetcher, Profile Parser, and Multi-Format Exporter (JSON, CSV, TXT, Markdown) with Deep Taste & Rating Analytics. Zero dependencies, pure local execution.
+
+## Overview
+anifetch is an open-source CLI utility designed to query AniList's public GraphQL API, parse an entire anime collection or watchlist, and export the structured dataset into multiple formats (JSON, CSV spreadsheets for Microsoft Excel / Google Sheets, plain-text summary reports, and GitHub-flavored Markdown).
+
+- GitHub Repository: https://github.com/Liyfez/Anifetch
+- Live Website: https://liyfez.github.io/Anifetch/
+- npm Package: https://www.npmjs.com/package/@l1e/anifetch
+- Author: Liyfez (@l1e)
+- License: MIT
+- Runtime: Node.js >= 18 (Zero external runtime dependencies)
+
+## Key Capabilities & Features
+1. Instant Zero-Install Execution: Can be run immediately via `npx @l1e/anifetch <username>` without local installation.
+2. 4 Output Formats:
+   - JSON: Detailed raw dataset and mathematical analytics.
+   - CSV: Spreadsheets with automated formula injection sanitization (protecting against `=CMD|' /C'` CSV injection).
+   - TXT: Plain text ASCII summary with score histograms and status counts.
+   - Markdown: Formatted GitHub-ready report with links, rating tiers, and hidden gem divergences.
+3. Deep Statistical Engine: Calculates mean, median, standard deviation, community divergence, score tiers, and studio/genre engagement metrics.
+4. Interactive Mode: Step-by-step terminal wizard with ESC step-back navigation.
+5. Flexible Filters & Sorting: Filter by status (`--completed`, `--watching`, `--dropped`, `--paused`, `--planning`), minimum score (`--min-score 85` or `--min-score 8.5`), genre (`--genre "Action"`), and sort by score, title, or episodes.
+
+## Quick CLI Usage & Examples
+
+### Basic Execution:
+- Run instant fetch and JSON export: `npx @l1e/anifetch <username>`
+- Run interactive wizard: `npx @l1e/anifetch`
+- Install globally: `npm install -g @l1e/anifetch` then `anifetch <username>`
+
+### Export Formats:
+- Export all 4 formats simultaneously: `anifetch <username> -f all`
+- Export to CSV spreadsheet for Excel / Google Sheets: `anifetch <username> --all --csv`
+- Export to JSON files: `anifetch <username> --json`
+- Export plain-text summary report: `anifetch <username> --dropped --txt`
+- Export GitHub-flavored Markdown report: `anifetch <username> --completed --md`
+
+### Filters & Queries:
+- Filter only completed anime: `anifetch <username> --completed`
+- Filter by rating (85+ or 8.5+): `anifetch <username> --min-score 85`
+- Filter by genre: `anifetch <username> --genre "Sci-Fi"`
+- Sort by highest personal rating: `anifetch <username> --sort score --order desc`
+- Output to custom folder: `anifetch <username> -f all -o ./my-anime-backup`
+- Pipe pure JSON to stdout: `anifetch <username> --json-stdout | jq .`
+- Test extraction offline: `anifetch --demo`

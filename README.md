@@ -151,7 +151,7 @@ SHORTHAND SWITCHES:
 ## 💻 Programmatic Node.js API
 
 ```javascript
-import { anifetch } from "anifetch";
+import { anifetch } from "@l1e/anifetch";
 
 // Fetch and export programmatically
 const result = await anifetch("l1e", {
@@ -163,6 +163,34 @@ const result = await anifetch("l1e", {
 console.log("Total Fetched:", result.parsed.total_anime_count);
 console.log("Exported Files:", result.exportedFiles);
 ```
+
+---
+
+## ❓ Frequently Asked Questions (FAQ)
+
+<details>
+<summary><strong>How do I export my AniList anime list to CSV / Excel?</strong></summary>
+
+Run `npx @l1e/anifetch <username> --all --csv`. This automatically downloads your full collection and generates 3 sanitized `.csv` spreadsheet files (Anime List, Genre Breakdown, Studio Breakdown) formatted for Microsoft Excel, Google Sheets, and Numbers.
+</details>
+
+<details>
+<summary><strong>How can I backup my AniList profile to JSON?</strong></summary>
+
+Run `npx @l1e/anifetch <username> --json`. You'll receive `<username>_anime_list.json` with all metadata, scores, and progress, plus `<username>_deep_analysis.json` containing mathematical taste analysis.
+</details>
+
+<details>
+<summary><strong>Do I need an AniList account token or API key?</strong></summary>
+
+No authentication or API key is required. anifetch queries AniList's public GraphQL endpoint directly using public usernames.
+</details>
+
+<details>
+<summary><strong>Are the CSV exports protected against spreadsheet formula injection?</strong></summary>
+
+Yes! anifetch automatically sanitizes cells starting with sensitive trigger characters (`=`, `+`, `-`, `@`) to prevent CSV formula injection attacks in Microsoft Excel and Google Sheets.
+</details>
 
 ---
 
