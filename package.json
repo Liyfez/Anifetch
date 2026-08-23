@@ -36,5 +36,12 @@
   "bugs": {
     "url": "https://github.com/Liyfez/anifetch/issues"
   },
-  "homepage": "https://github.com/Liyfez/anifetch#readme"
+  "homepage": "https://github.com/Liyfez/Anifetch#readme",
+  "files": [
+    "bin",
+    "src",
+    "assets",
+    "README.md",
+    "LICENSE"
+  ]
 }
