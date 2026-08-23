@@ -546,43 +546,92 @@
       color: #fff;
     }
 
-    /* FAQ Section */
+    /* Modern FAQ Accordion Layout */
     .faq-section {
-      margin-bottom: 80px;
+      max-width: 860px;
+      margin: 0 auto 90px;
     }
-    .faq-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
+    .faq-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 36px;
     }
-    .faq-card {
+    .faq-item {
       background: var(--bg-card);
       border: 1px solid var(--border-soft);
       border-radius: var(--radius);
-      padding: 24px;
-      transition: border-color 0.2s;
+      overflow: hidden;
+      transition: all 0.25s ease;
     }
-    .faq-card:hover {
-      border-color: var(--border-hover);
+    .faq-item:hover {
+      border-color: rgba(250, 140, 197, 0.25);
     }
-    .faq-question {
-      font-size: 1.05rem;
+    .faq-item[open] {
+      border-color: rgba(250, 140, 197, 0.35);
+      background: #151D30;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+    .faq-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      font-size: 1.02rem;
       font-weight: 600;
+      color: var(--text-main);
+      transition: color 0.2s;
+    }
+    .faq-summary::-webkit-details-marker {
+      display: none;
+    }
+    .faq-item[open] .faq-summary {
       color: #fa8cc5;
-      margin-bottom: 10px;
     }
-    .faq-answer {
+    .faq-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .faq-num {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #fa8cc5;
+      background: rgba(250, 140, 197, 0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      color: #fa8cc5;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    .faq-item[open] .faq-icon {
+      transform: rotate(180deg);
+    }
+    .faq-body {
+      padding: 0 24px 22px 64px;
       color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
+      font-size: 0.94rem;
+      line-height: 1.65;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      margin-top: 4px;
+      padding-top: 14px;
     }
-    .faq-answer code {
+    .faq-body code {
       font-family: var(--font-mono);
       color: #fa8cc5;
-      background: rgba(0, 0, 0, 0.35);
-      padding: 2px 6px;
-      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(250, 140, 197, 0.12);
+      font-size: 0.88rem;
     }
 
     /* Footer */
@@ -605,7 +654,8 @@
       .hero-banner-img { max-width: 100%; }
       .quick-run { flex-direction: column; gap: 14px; text-align: center; }
       .cmd-item { flex-direction: column; align-items: flex-start; }
-      .faq-grid { grid-template-columns: 1fr; }
+      .faq-body { padding-left: 24px; }
+      .faq-summary { font-size: 0.95rem; }
     }
   </style>
 </head>
@@ -1023,36 +1073,84 @@
       <h2 class="section-title">Frequently Asked Questions</h2>
       <p class="section-sub">Everything you need to know about exporting, backing up, and analyzing your AniList collection.</p>
 
-      <div class="faq-grid">
-        <div class="faq-card">
-          <h3 class="faq-question">How do I export my AniList anime list to CSV / Excel?</h3>
-          <p class="faq-answer">Run <code>npx @l1e/anifetch &lt;username&gt; --all --csv</code> in your terminal. It instantly generates 3 sanitized CSV spreadsheet files (Anime List, Genre Breakdown, Studio Breakdown) ready for Microsoft Excel, Google Sheets, and Numbers without needing any prior software installation.</p>
-        </div>
+      <div class="faq-accordion">
+        <details class="faq-item" open>
+          <summary class="faq-summary">
+            <div class="faq-summary-left">
+              <span class="faq-num">01</span>
+              <span>How do I export my AniList anime list to CSV / Excel?</span>
+            </div>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="faq-body">
+            Run <code>npx @l1e/anifetch &lt;username&gt; --all --csv</code> in your terminal. It instantly downloads your profile and generates 3 sanitized CSV spreadsheet files (Anime List, Genre Breakdown, Studio Breakdown) formatted for Microsoft Excel, Google Sheets, and Numbers without needing any prior software installation.
+          </div>
+        </details>
 
-        <div class="faq-card">
-          <h3 class="faq-question">How can I backup my full AniList profile to JSON?</h3>
-          <p class="faq-answer">Run <code>npx @l1e/anifetch &lt;username&gt; --json</code>. This exports raw anime metadata, personal ratings, watch status, episode counts, genres, studios, and advanced taste analytics into formatted JSON files.</p>
-        </div>
+        <details class="faq-item">
+          <summary class="faq-summary">
+            <div class="faq-summary-left">
+              <span class="faq-num">02</span>
+              <span>How can I backup my full AniList profile to JSON?</span>
+            </div>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="faq-body">
+            Run <code>npx @l1e/anifetch &lt;username&gt; --json</code>. This exports raw anime metadata, personal ratings, watch status, episode counts, genres, studios, and advanced mathematical taste analytics into formatted JSON files.
+          </div>
+        </details>
 
-        <div class="faq-card">
-          <h3 class="faq-question">Do I need an AniList API token or account password?</h3>
-          <p class="faq-answer">No! anifetch queries AniList's public GraphQL API directly. You only need the public AniList username. No login credentials, OAuth tokens, or API keys are required.</p>
-        </div>
+        <details class="faq-item">
+          <summary class="faq-summary">
+            <div class="faq-summary-left">
+              <span class="faq-num">03</span>
+              <span>Do I need an AniList API token or account password?</span>
+            </div>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="faq-body">
+            No! anifetch queries AniList's public GraphQL API directly. You only need the public AniList username. No login credentials, OAuth tokens, or API keys are required.
+          </div>
+        </details>
 
-        <div class="faq-card">
-          <h3 class="faq-question">Can I export to all formats simultaneously?</h3>
-          <p class="faq-answer">Yes, pass the <code>-f all</code> flag (<code>npx @l1e/anifetch &lt;username&gt; -f all</code>) to generate all 7 output files (JSON, CSV spreadsheets, TXT summary, and GitHub Markdown report) in a single command.</p>
-        </div>
+        <details class="faq-item">
+          <summary class="faq-summary">
+            <div class="faq-summary-left">
+              <span class="faq-num">04</span>
+              <span>Can I export to all formats simultaneously?</span>
+            </div>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="faq-body">
+            Yes, pass the <code>-f all</code> flag (<code>npx @l1e/anifetch &lt;username&gt; -f all</code>) to generate all 7 output files (JSON, CSV spreadsheets, TXT summary, and GitHub Markdown report) in a single command.
+          </div>
+        </details>
 
-        <div class="faq-card">
-          <h3 class="faq-question">How does anifetch calculate score divergences?</h3>
-          <p class="faq-answer">anifetch analyzes your personal scores against the global AniList community average, identifying your unique "Hidden Gems" (shows you loved far more than the community) and "Overrated" outliers.</p>
-        </div>
+        <details class="faq-item">
+          <summary class="faq-summary">
+            <div class="faq-summary-left">
+              <span class="faq-num">05</span>
+              <span>How does anifetch calculate score divergences?</span>
+            </div>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="faq-body">
+            anifetch analyzes your personal scores against the global AniList community average, identifying your unique "Hidden Gems" (shows you loved far more than the community) and "Overrated" outliers.
+          </div>
+        </details>
 
-        <div class="faq-card">
-          <h3 class="faq-question">Are CSV files protected against formula injection?</h3>
-          <p class="faq-answer">Yes. anifetch automatically sanitizes anime titles and notes starting with sensitive characters (<code>=</code>, <code>+</code>, <code>-</code>, <code>@</code>) to prevent CSV formula injection attacks in Excel and Google Sheets.</p>
-        </div>
+        <details class="faq-item">
+          <summary class="faq-summary">
+            <div class="faq-summary-left">
+              <span class="faq-num">06</span>
+              <span>Are CSV files protected against formula injection?</span>
+            </div>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="faq-body">
+            Yes. anifetch automatically sanitizes anime titles and notes starting with sensitive characters (<code>=</code>, <code>+</code>, <code>-</code>, <code>@</code>) to prevent CSV formula injection attacks in Excel and Google Sheets.
+          </div>
+        </details>
       </div>
     </section>
   </main>
