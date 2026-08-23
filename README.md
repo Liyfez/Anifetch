@@ -2,37 +2,47 @@
 
 <img src="./assets/anifetch_banner.png" alt="ANIFETCH Logo Banner" width="700" />
 
-# 🌸 anifetch
+<p>
+  <strong>Fast AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, Markdown)</strong>
+</p>
 
-**Fast AniList Data Fetcher & Multi-Format Exporter (JSON, CSV, TXT, Markdown)**
-
+[![Website](https://img.shields.io/badge/Website-liyfez.github.io%2FAnifetch-ff69b4?style=flat-square&logo=google-chrome&logoColor=white)](https://liyfez.github.io/Anifetch/)
 [![npm version](https://img.shields.io/npm/v/anifetch.svg?color=ff69b4&style=flat-square)](https://www.npmjs.com/package/anifetch)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?style=flat-square)](https://nodejs.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](#)
 
-*Extract, filter, and export your entire AniList anime collection into **JSON**, **CSV** (Excel/Sheets), **TXT**, and **Markdown**.*
+*Extract, filter, and export your entire AniList anime collection into **JSON**, **CSV** (Excel/Sheets), **TXT**, and **Markdown** with automated rating & taste analysis.*
+
+🌐 **[Live Website & Interactive Demo](https://liyfez.github.io/Anifetch/)**
 
 </div>
 
 ---
 
-## ⚡ How to Open the Tool
+## ⚡ Instant Execution (No Install Required)
 
-### 1. Interactive Mode
-Simply run `anifetch` with no arguments to launch interactive mode:
+Run directly with `npx`:
+
+```bash
+npx anifetch <username>
+```
+
+Or launch interactive mode (just open the tool!):
 
 ```bash
 npx anifetch
 ```
-Or if installed globally:
+
+Or install globally:
+
 ```bash
-anifetch
+npm install -g anifetch
 ```
 
 ---
 
-## 🚀 Direct Command Line Usage
+## 🚀 How to Fetch & Export Data
 
 ```bash
 # 1. Fetch entire anime list and export to JSON
@@ -50,13 +60,13 @@ anifetch <username> --dropped --txt
 # 5. Export EVERYTHING into all 4 formats (JSON, CSV, TXT, Markdown) at once
 anifetch <username> -f all
 
-# 6. Filter by score: Only anime rated 85+
+# 6. Filter by score: Only anime rated 85+ (or 8.5+)
 anifetch <username> --min-score 85 --csv
 
 # 7. Custom output destination folder
 anifetch <username> -f all -o ./my-anime-data
 
-# 8. Stream pure JSON to stdout (for piping to jq or scripts)
+# 8. Stream pure JSON to stdout (for piping to jq or webhooks)
 anifetch <username> --json-stdout | jq .
 
 # 9. Test extraction with built-in demo profile
@@ -96,12 +106,12 @@ Run 'anifetch --help' to see all options, filters & formats.
 
 ---
 
-## 📁 Output Formats
+## 📁 Generated Output Files
 
-| Format | Flag | Output Files | Description |
+| Format | CLI Switch | Output Files | Description |
 | :--- | :--- | :--- | :--- |
 | **JSON** | `-f json` / `--json` | `<user>_anime_list.json`<br>`<user>_deep_analysis.json` | Clean structured list with all titles, personal scores, progress, tags, studios, and complete metrics. |
-| **CSV** | `-f csv` / `--csv` | `<user>_anime_list.csv`<br>`<user>_genre_breakdown.csv`<br>`<user>_studio_breakdown.csv` | Spreadsheets ready for Microsoft Excel, Numbers, or Google Sheets with clean escaping. |
+| **CSV** | `-f csv` / `--csv` | `<user>_anime_list.csv`<br>`<user>_genre_breakdown.csv`<br>`<user>_studio_breakdown.csv` | Spreadsheets ready for Microsoft Excel, Numbers, or Google Sheets with CSV formula injection protection. |
 | **TXT** | `-f txt` / `--txt` | `<user>_summary.txt` | Human-readable text report with status breakdowns, score histograms, hot takes, and full ASCII table. |
 | **Markdown** | `-f md` / `--md` | `<user>_analysis_report.md` | GitHub-flavored Markdown report with formatted tables and direct AniList anime links. |
 | **ALL** | `-f all` | **All 7 files** | Generates all 4 formats simultaneously. |
@@ -122,7 +132,7 @@ OPTIONS & FLAGS:
   -f, --format <format>    Export format: json, csv, txt, md, all (default: json)
   -o, --output <dir>       Destination folder for files (default: ./anifetch-output)
   -d, --demo               Run test with sample demo profile (no internet required)
-  --min-score <number>     Filter anime by minimum rating (e.g. --min-score 80)
+  --min-score <number>     Filter anime by minimum rating (e.g. --min-score 80 or --min-score 8)
   --genre <genre>          Filter anime by genre (e.g. --genre Action)
   --sort <field>           Sort by: score, title, episodes, date, popularity
   --order <asc|desc>       Sort order: asc or desc (default: desc)
@@ -138,7 +148,25 @@ SHORTHAND SWITCHES:
 
 ---
 
-## 🧪 Running Tests
+## 💻 Programmatic Node.js API
+
+```javascript
+import { anifetch } from "anifetch";
+
+// Fetch and export programmatically
+const result = await anifetch("l1e", {
+  status: "completed",
+  format: "all",
+  outputDir: "./output"
+});
+
+console.log("Total Fetched:", result.parsed.total_anime_count);
+console.log("Exported Files:", result.exportedFiles);
+```
+
+---
+
+## 🧪 Tests
 
 ```bash
 npm test

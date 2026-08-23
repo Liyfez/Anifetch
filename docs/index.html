@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>anifetch — Fast AniList Data Fetcher & Multi-Format Exporter</title>
+  <meta name="description" content="Extract, filter, and export your entire AniList anime collection into JSON, CSV (Excel), TXT, and Markdown with automated rating analysis.">
+  <link rel="icon" type="image/png" href="./assets/anifetch_logo.png">
+  <style>
+    :root {
+      --bg-main: #0B0F19;
+      --bg-card: #131A2B;
+      --bg-card-hover: #182238;
+      --bg-terminal: #0E1422;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --accent-rose: #F472B6;
+      --accent-pink: #FF69B4;
+      --accent-sakura: #FBCFE8;
+      --accent-lavender: #E9D5FF;
+      --accent-mint: #34D399;
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(244, 114, 182, 0.3);
+      --radius: 14px;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(255, 45, 117, 0.09) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(147, 51, 234, 0.04) 0%, transparent 50%);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navbar */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border-soft);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 15, 25, 0.85);
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-rose);
+    }
+    .btn-github {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-soft);
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-github:hover {
+      background: rgba(244, 114, 182, 0.12);
+      border-color: var(--accent-rose);
+      color: #fff;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 70px 0 50px;
+    }
+    .hero-banner-img {
+      max-width: 680px;
+      width: 100%;
+      height: auto;
+      margin-bottom: 24px;
+      filter: drop-shadow(0 15px 35px rgba(255, 45, 117, 0.18));
+      border-radius: 16px;
+    }
+    .hero-sub {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 28px;
+    }
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+    .badge {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .badge span {
+      color: var(--accent-rose);
+      font-weight: 600;
+    }
+
+    /* Quick Run Box */
+    .quick-run {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      max-width: 540px;
+      margin: 0 auto 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .quick-run-text {
+      color: var(--accent-sakura);
+    }
+    .quick-run-text span {
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .copy-btn {
+      background: rgba(244, 114, 182, 0.15);
+      border: 1px solid var(--accent-rose);
+      color: var(--accent-sakura);
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      background: var(--accent-rose);
+      color: #000;
+    }
+
+    /* Terminal Showcase */
+    .terminal-section {
+      margin: 40px 0 70px;
+    }
+    .terminal-window {
+      background: var(--bg-terminal);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(244, 114, 182, 0.05);
+    }
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .terminal-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #FF5F56; }
+    .dot-yellow { background: #FFBD2E; }
+    .dot-green { background: #27C93F; }
+    .terminal-title {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+    }
+
+    .terminal-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--border-soft);
+      overflow-x: auto;
+    }
+    .terminal-tab {
+      padding: 10px 18px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-right: 1px solid var(--border-soft);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .terminal-tab:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .terminal-tab.active {
+      color: var(--accent-rose);
+      background: var(--bg-terminal);
+      border-bottom: 2px solid var(--accent-rose);
+    }
+
+    .terminal-body {
+      padding: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      white-space: pre;
+      overflow-x: auto;
+      color: var(--text-main);
+    }
+    .t-pink { color: var(--accent-rose); }
+    .t-sakura { color: var(--accent-sakura); }
+    .t-lavender { color: var(--accent-lavender); }
+    .t-mint { color: var(--accent-mint); }
+    .t-muted { color: var(--text-muted); }
+    .t-dim { color: var(--text-dim); }
+
+    /* Features Grid */
+    .section-title {
+      text-align: center;
+      margin-bottom: 14px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      padding: 28px;
+      border-radius: var(--radius);
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+    }
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .feature-title {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+    .feature-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Formats Table */
+    .formats-section {
+      margin-bottom: 80px;
+    }
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th, td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    td {
+      font-size: 0.92rem;
+    }
+    td code {
+      font-family: var(--font-mono);
+      color: var(--accent-rose);
+      background: rgba(244, 114, 182, 0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* Cheat Sheet */
+    .cheatsheet {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-bottom: 80px;
+    }
+    .cmd-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-soft);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .cmd-item:last-child {
+      border-bottom: none;
+    }
+    .cmd-code {
+      font-family: var(--font-mono);
+      color: var(--accent-sakura);
+      font-size: 0.92rem;
+    }
+    .cmd-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: var(--accent-rose);
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .hero-banner-img { max-width: 100%; }
+      .quick-run { flex-direction: column; gap: 14px; text-align: center; }
+      .cmd-item { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav-inner">
+      <a href="#" class="logo-link">
+        <img src="./assets/anifetch_logo.png" alt="anifetch" height="28">
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#formats">Formats</a>
+        <a href="#commands">Commands</a>
+        <a href="https://github.com/Liyfez/Anifetch" target="_blank" class="btn-github">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="container">
+    <section class="hero">
+      <img src="./assets/anifetch_banner.png" alt="anifetch banner" class="hero-banner-img">
+      <p class="hero-sub">Fast AniList data extractor and multi-format exporter into <strong>JSON</strong>, <strong>CSV</strong> (Excel/Sheets), <strong>TXT</strong>, and <strong>Markdown</strong>.</p>
+
+      <div class="badges">
+        <div class="badge">npm <span>v1.0.0</span></div>
+        <div class="badge">dependencies <span>0</span></div>
+        <div class="badge">node <span>>= 18.0.0</span></div>
+        <div class="badge">license <span>MIT</span></div>
+      </div>
+
+      <div class="quick-run">
+        <div class="quick-run-text"><span>$ </span>npx anifetch &lt;username&gt;</div>
+        <button class="copy-btn" onclick="copyCommand('npx anifetch l1e')">Copy</button>
+      </div>
+    </section>
+
+    <!-- Terminal Preview -->
+    <section class="terminal-section">
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+          </div>
+          <div class="terminal-title">anifetch ~ bash</div>
+          <div></div>
+        </div>
+
+        <div class="terminal-tabs">
+          <div class="terminal-tab active" onclick="switchTab(0)">Interactive Mode</div>
+          <div class="terminal-tab" onclick="switchTab(1)">Full Export (-f all)</div>
+          <div class="terminal-tab" onclick="switchTab(2)">Spreadsheet (--csv)</div>
+          <div class="terminal-tab" onclick="switchTab(3)">Score Filter (--min-score 85)</div>
+        </div>
+
+        <div class="terminal-body" id="terminal-content"></div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features">
+      <h2 class="section-title">Why anifetch?</h2>
+      <p class="section-sub">Engineered with zero external runtime dependencies, blazing performance, and complete data accuracy.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Instant Zero-Install Execution</h3>
+          <p class="feature-desc">Run immediately on any terminal with <code>npx anifetch &lt;username&gt;</code> without needing prior installation.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3 class="feature-title">Multi-Format Exporters</h3>
+          <p class="feature-desc">Export seamlessly to JSON, CSV spreadsheets (ready for Microsoft Excel & Google Sheets), TXT reports, and GitHub Markdown.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Deep Statistical Analytics</h3>
+          <p class="feature-desc">Calculates mean, median, standard deviation, community divergence, score tiers, and studio/genre engagement metrics.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3 class="feature-title">Spreadsheet Injection Security</h3>
+          <p class="feature-desc">Built-in formula sanitization prevents CSV formula injection attacks from rogue anime titles or user notes.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⌨️</div>
+          <h3 class="feature-title">Interactive Navigation</h3>
+          <p class="feature-desc">Interactive prompt mode with seamless <kbd>ESC</kbd> step-back navigation and intelligent command detection.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3 class="feature-title">100% Private & Safe</h3>
+          <p class="feature-desc">Zero telemetry, zero bloat, and zero hardcoded secrets. All processing happens 100% locally on your machine.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formats -->
+    <section id="formats" class="formats-section">
+      <h2 class="section-title">Supported Output Formats</h2>
+      <p class="section-sub">Choose your desired output or export all 7 files simultaneously.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Format</th>
+              <th>CLI Switch</th>
+              <th>Generated Files</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>JSON</strong></td>
+              <td><code>--json</code></td>
+              <td><code>&lt;user&gt;_anime_list.json</code><br><code>&lt;user&gt;_deep_analysis.json</code></td>
+              <td>Complete structured dataset with all raw ratings, metadata, studios, and analytics metrics.</td>
+            </tr>
+            <tr>
+              <td><strong>CSV</strong></td>
+              <td><code>--csv</code></td>
+              <td><code>&lt;user&gt;_anime_list.csv</code><br><code>&lt;user&gt;_genre_breakdown.csv</code><br><code>&lt;user&gt;_studio_breakdown.csv</code></td>
+              <td>Clean spreadsheet format for Microsoft Excel, Numbers, and Google Sheets.</td>
+            </tr>
+            <tr>
+              <td><strong>TXT</strong></td>
+              <td><code>--txt</code></td>
+              <td><code>&lt;user&gt;_summary.txt</code></td>
+              <td>Human-readable ASCII overview with consumption stats, rating tiers, and formatted list table.</td>
+            </tr>
+            <tr>
+              <td><strong>Markdown</strong></td>
+              <td><code>--md</code></td>
+              <td><code>&lt;user&gt;_analysis_report.md</code></td>
+              <td>GitHub-flavored Markdown report complete with links, tables, and hidden gem divergences.</td>
+            </tr>
+            <tr>
+              <td><strong>ALL</strong></td>
+              <td><code>-f all</code></td>
+              <td><strong>All 7 files</strong></td>
+              <td>Exports all formats simultaneously in a single command.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Commands Cheat Sheet -->
+    <section id="commands">
+      <h2 class="section-title">CLI Commands Cheat Sheet</h2>
+      <p class="section-sub">Quick copy-paste commands for everyday use.</p>
+
+      <div class="cheatsheet">
+        <div class="cmd-item">
+          <div class="cmd-code">anifetch &lt;username&gt;</div>
+          <div class="cmd-desc">Fetch full profile and export to JSON</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code">anifetch &lt;username&gt; --completed --json</div>
+          <div class="cmd-desc">Export only completed anime to JSON</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code">anifetch &lt;username&gt; --all --csv</div>
+          <div class="cmd-desc">Export entire anime list to CSV spreadsheet</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code">anifetch &lt;username&gt; --dropped --txt</div>
+          <div class="cmd-desc">Export dropped anime to plain-text report</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code">anifetch &lt;username&gt; -f all</div>
+          <div class="cmd-desc">Export to all 4 formats (JSON, CSV, TXT, MD)</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code">anifetch &lt;username&gt; --min-score 85</div>
+          <div class="cmd-desc">Filter anime by minimum score (85+ or 8.5+)</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code">anifetch --demo</div>
+          <div class="cmd-desc">Test extraction with sample offline profile</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Released under the <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> • Created by <a href="https://github.com/Liyfez" target="_blank">Liyfez</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const terminalDemos = [
+      // Tab 0: Interactive
+      `<span class="t-pink">   █████╗ ███╗   ██╗██╗███████╗███████╗████████╗ ██████╗██╗  ██╗</span>
+<span class="t-pink">  ██╔══██╗████╗  ██║██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██║  ██║</span>
+<span class="t-pink">  ███████║██╔██╗ ██║██║█████╗  █████╗     ██║   ██║     ███████║</span>
+<span class="t-pink">  ██╔══██║██║╚██╗██║██║██╔══╝  ██╔══╝     ██║   ██║     ██╔══██║</span>
+<span class="t-pink">  ██║  ██║██║ ╚████║██║██║     ███████╗   ██║   ╚██████╗██║  ██║</span>
+<span class="t-pink">  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚══════╝   ╚═╝    ╚═════╝╚═╝  ╚═╝</span>
+  <span class="t-sakura">🌸 Fast AniList Data Fetcher & Multi-Format Exporter</span>
+
+<span class="t-sakura">For help and CLI options, run:</span> <span class="t-pink">anifetch --help</span>
+
+<span class="t-pink">Username or command:</span> <span class="t-sakura">l1e</span>
+<span class="t-pink">Export format [json / csv / txt / md / all] (default: json) [ESC: back]:</span> <span class="t-lavender">all</span>
+<span class="t-pink">Filter status [all / completed / watching / dropped / planning] (default: all) [ESC: back]:</span> <span class="t-lavender">all</span>
+
+<span class="t-dim">[*]</span> Fetching AniList collection for '<span class="t-sakura">l1e</span>'...
+
+<span class="t-sakura">🌸 Exported to:</span> ./anifetch-output <span class="t-dim">(l1e_anime_list.json, l1e_deep_analysis.json, l1e_anime_list.csv, ...)</span>`,
+
+      // Tab 1: Full Export
+      `<span class="t-dim">$ anifetch l1e -f all</span>
+
+<span class="t-dim">[*]</span> Fetching AniList collection for '<span class="t-sakura">l1e</span>'...
+
+<span class="t-sakura">🌸 Exported to:</span> C:\\anifetch-output
+  <span class="t-mint">•</span> [JSON] l1e_anime_list.json
+  <span class="t-mint">•</span> [JSON] l1e_deep_analysis.json
+  <span class="t-mint">•</span> [CSV]  l1e_anime_list.csv
+  <span class="t-mint">•</span> [CSV]  l1e_genre_breakdown.csv
+  <span class="t-mint">•</span> [CSV]  l1e_studio_breakdown.csv
+  <span class="t-mint">•</span> [TXT]  l1e_summary.txt
+  <span class="t-mint">•</span> [MD]   l1e_analysis_report.md
+
+<span class="t-sakura">Run 'anifetch --help' to see all options, filters & formats.</span>`,
+
+      // Tab 2: CSV
+      `<span class="t-dim">$ anifetch l1e --all --csv</span>
+
+<span class="t-dim">[*]</span> Fetching AniList collection for '<span class="t-sakura">l1e</span>'...
+
+<span class="t-sakura">🌸 Exported to:</span> C:\\anifetch-output (l1e_anime_list.csv, l1e_genre_breakdown.csv, l1e_studio_breakdown.csv)
+
+<span class="t-pink">EXAMPLES:</span>
+  <span class="t-pink">anifetch &lt;username&gt; --completed --json</span>    <span class="t-dim">Export completed anime to JSON</span>
+  <span class="t-pink">anifetch &lt;username&gt; --all --csv</span>           <span class="t-dim">Export all anime to spreadsheet</span>
+  <span class="t-pink">anifetch &lt;username&gt; -f all</span>                <span class="t-dim">Export to JSON, CSV, TXT & Markdown</span>`,
+
+      // Tab 3: Min Score
+      `<span class="t-dim">$ anifetch l1e --min-score 85 --csv</span>
+
+<span class="t-dim">[*]</span> Fetching AniList collection for '<span class="t-sakura">l1e</span>'...
+<span class="t-sakura">🌸 Exported to:</span> C:\\anifetch-output (l1e_anime_list.csv)
+
+<span class="t-sakura">Filtered 42 anime with rating &gt;= 85</span>`
+    ];
+
+    function switchTab(index) {
+      document.querySelectorAll('.terminal-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+      });
+      document.getElementById('terminal-content').innerHTML = terminalDemos[index];
+    }
+
+    function copyCommand(text) {
+      navigator.clipboard.writeText(text);
+      const btn = document.querySelector('.copy-btn');
+      const old = btn.innerText;
+      btn.innerText = 'Copied!';
+      setTimeout(() => btn.innerText = old, 2000);
+    }
+
+    // Initialize
+    switchTab(0);
+  </script>
+</body>
+</html>
