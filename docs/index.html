@@ -260,193 +260,77 @@
     .t-muted { color: var(--text-muted); }
     .t-dim { color: var(--text-dim); }
 
-    /* High-End Bento Grid */
-    .bento-section {
-      margin-bottom: 90px;
-    }
-    .specs-header {
-      text-align: center;
-      margin-bottom: 48px;
-    }
-    .eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      color: var(--accent-rose);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      opacity: 0.9;
-    }
+    /* Features Grid */
     .section-title {
-      font-size: 2.1rem;
+      text-align: center;
+      margin-bottom: 14px;
+      font-size: 2rem;
       font-weight: 700;
       color: var(--text-main);
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
     }
     .section-sub {
+      text-align: center;
       color: var(--text-muted);
-      max-width: 580px;
-      margin: 0 auto;
-      font-size: 1.02rem;
+      max-width: 600px;
+      margin: 0 auto 48px;
     }
-
-    .bento-grid {
+    .features-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
     }
-    .bento-card {
-      background: #111726;
-      border: 1px solid rgba(255, 255, 255, 0.07);
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      padding: 28px;
       border-radius: var(--radius);
-      padding: 26px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: border-color 0.25s ease, background 0.25s ease;
-      position: relative;
-      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .bento-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 30px rgba(244, 114, 182, 0.08);
     }
-    .bento-card:hover {
-      border-color: rgba(244, 114, 182, 0.35);
-      background: #141c30;
-    }
-    .bento-wide {
-      grid-column: span 2;
-    }
-    .bento-full {
-      grid-column: span 3;
-    }
-
-    .bento-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-    }
-    .bento-tag {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 3px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    .bento-icon-svg {
-      color: var(--accent-rose);
+    .feature-icon-wrapper {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(244, 114, 182, 0.1);
+      border: 1px solid rgba(244, 114, 182, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
+      color: var(--accent-rose);
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
     }
-    .bento-icon-svg svg {
-      width: 20px;
-      height: 20px;
+    .feature-card:hover .feature-icon-wrapper {
+      background: rgba(244, 114, 182, 0.2);
+      border-color: var(--accent-rose);
+      transform: scale(1.06);
+      box-shadow: 0 0 20px rgba(244, 114, 182, 0.3);
+    }
+    .feature-icon-wrapper svg {
+      width: 22px;
+      height: 22px;
       stroke: currentColor;
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
       fill: none;
     }
-
-    .bento-title {
-      font-size: 1.15rem;
-      font-weight: 600;
+    .feature-title {
+      font-size: 1.18rem;
+      margin-bottom: 10px;
       color: var(--text-main);
-      letter-spacing: -0.01em;
-      margin-bottom: 8px;
+      font-weight: 600;
     }
-    .bento-desc {
+    .feature-desc {
       color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.55;
-    }
-
-    .bento-code-snippet {
-      margin-top: 18px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: var(--accent-sakura);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .bento-code-snippet span.prompt { color: var(--text-dim); user-select: none; }
-    .bento-code-snippet span.flag { color: var(--accent-rose); }
-
-    .format-pills {
-      display: flex;
-      gap: 8px;
-      margin-top: 18px;
-      flex-wrap: wrap;
-    }
-    .fp-pill {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: rgba(244, 114, 182, 0.08);
-      border: 1px solid rgba(244, 114, 182, 0.2);
-      color: var(--accent-sakura);
-    }
-
-    .chips-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-      flex-wrap: wrap;
-    }
-    .chip {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-soft);
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
-
-    .bento-full-flex {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .privacy-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      color: var(--accent-mint);
-      background: rgba(52, 211, 153, 0.08);
-      border: 1px solid rgba(52, 211, 153, 0.2);
-      padding: 6px 14px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent-mint);
-      box-shadow: 0 0 8px var(--accent-mint);
+      font-size: 0.95rem;
+      line-height: 1.6;
     }
 
     /* Formats Table */
@@ -535,8 +419,6 @@
       .hero-banner-img { max-width: 100%; }
       .quick-run { flex-direction: column; gap: 14px; text-align: center; }
       .cmd-item { flex-direction: column; align-items: flex-start; }
-      .bento-grid { grid-template-columns: 1fr; }
-      .bento-wide, .bento-full { grid-column: span 1; }
     }
   </style>
 </head>
@@ -605,116 +487,58 @@
       </div>
     </section>
 
-    <!-- Features / Capabilities Bento Grid -->
-    <section id="features" class="bento-section">
-      <div class="specs-header">
-        <div class="eyebrow">// ARCHITECTURE & CAPABILITIES</div>
-        <h2 class="section-title">Engineered with Precision</h2>
-        <p class="section-sub">Zero external runtime dependencies. Native GraphQL pipelining. Mathematical score normalization.</p>
-      </div>
+    <!-- Features -->
+    <section id="features">
+      <h2 class="section-title">Why anifetch?</h2>
+      <p class="section-sub">Engineered with zero external runtime dependencies, blazing performance, and complete data accuracy.</p>
 
-      <div class="bento-grid">
-        <!-- 1. Instant Runtime (Wide 2-col) -->
-        <div class="bento-card bento-wide">
-          <div>
-            <div class="bento-top">
-              <span class="bento-tag">RUNTIME</span>
-              <div class="bento-icon-svg">
-                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              </div>
-            </div>
-            <h3 class="bento-title">Instant Node Execution</h3>
-            <p class="bento-desc">Zero package dependencies. Runs immediately in any terminal via native Node.js ESM and built-in fetch without local installation overhead.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
           </div>
-          <div class="bento-code-snippet">
-            <span class="prompt">$</span> npx anifetch &lt;username&gt; <span class="flag">-f all</span>
-          </div>
+          <h3 class="feature-title">Instant Zero-Install Execution</h3>
+          <p class="feature-desc">Run immediately on any terminal with <code>npx anifetch &lt;username&gt;</code> without needing prior installation.</p>
         </div>
 
-        <!-- 2. Multi-Format Exporters (1-col) -->
-        <div class="bento-card">
-          <div>
-            <div class="bento-top">
-              <span class="bento-tag">EXPORTS</span>
-              <div class="bento-icon-svg">
-                <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-              </div>
-            </div>
-            <h3 class="bento-title">Unified Multi-Format Pipeline</h3>
-            <p class="bento-desc">Simultaneously transforms raw GraphQL payloads into structured formats in a single pass.</p>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
           </div>
-          <div class="format-pills">
-            <span class="fp-pill">.json</span>
-            <span class="fp-pill">.csv</span>
-            <span class="fp-pill">.txt</span>
-            <span class="fp-pill">.md</span>
-          </div>
+          <h3 class="feature-title">Multi-Format Exporters</h3>
+          <p class="feature-desc">Export seamlessly to JSON, CSV spreadsheets (ready for Microsoft Excel & Google Sheets), TXT reports, and GitHub Markdown.</p>
         </div>
 
-        <!-- 3. Mathematical Taste Engine (1-col) -->
-        <div class="bento-card">
-          <div>
-            <div class="bento-top">
-              <span class="bento-tag">ANALYTICS</span>
-              <div class="bento-icon-svg">
-                <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-              </div>
-            </div>
-            <h3 class="bento-title">Statistical Taste Engine</h3>
-            <p class="bento-desc">Calculates Gaussian distributions, standard deviations, and community delta hot-takes automatically.</p>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
           </div>
-          <div class="chips-row">
-            <span class="chip">Mean & Median</span>
-            <span class="chip">Divergence Δ</span>
-            <span class="chip">Drop Friction</span>
-          </div>
+          <h3 class="feature-title">Deep Statistical Analytics</h3>
+          <p class="feature-desc">Calculates mean, median, standard deviation, community divergence, score tiers, and studio/genre engagement metrics.</p>
         </div>
 
-        <!-- 4. Security & Integrity (1-col) -->
-        <div class="bento-card">
-          <div>
-            <div class="bento-top">
-              <span class="bento-tag">SECURITY</span>
-              <div class="bento-icon-svg">
-                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
-              </div>
-            </div>
-            <h3 class="bento-title">CSV Formula Immunity</h3>
-            <p class="bento-desc">Built-in formula sanitization neutralizes spreadsheet execution triggers (<code>=</code>, <code>+</code>, <code>-</code>, <code>@</code>) in Excel and Google Sheets.</p>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
           </div>
+          <h3 class="feature-title">Spreadsheet Injection Security</h3>
+          <p class="feature-desc">Built-in formula sanitization prevents CSV formula injection attacks from rogue anime titles or user notes.</p>
         </div>
 
-        <!-- 5. Interactive Navigation (1-col) -->
-        <div class="bento-card">
-          <div>
-            <div class="bento-top">
-              <span class="bento-tag">CLI UX</span>
-              <div class="bento-icon-svg">
-                <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
-              </div>
-            </div>
-            <h3 class="bento-title">Stateful Interactive Wizard</h3>
-            <p class="bento-desc">Persistent terminal session featuring non-destructive <kbd>ESC</kbd> rollback and automated command line parser.</p>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
           </div>
+          <h3 class="feature-title">Interactive Navigation</h3>
+          <p class="feature-desc">Interactive prompt mode with seamless <kbd>ESC</kbd> step-back navigation and intelligent command detection.</p>
         </div>
 
-        <!-- 6. Privacy & Sandboxing (Full width 3-col) -->
-        <div class="bento-card bento-full">
-          <div class="bento-top">
-            <span class="bento-tag">PRIVACY</span>
-            <div class="bento-icon-svg">
-              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           </div>
-          <div class="bento-full-flex">
-            <div>
-              <h3 class="bento-title">100% Local Execution & Zero Telemetry</h3>
-              <p class="bento-desc">No tracking, no analytics pings, and no intermediate cloud proxies. Data streams straight from AniList's public endpoint directly to your machine.</p>
-            </div>
-            <div class="privacy-badge">
-              <span class="status-dot"></span> 100% Client-Side
-            </div>
-          </div>
+          <h3 class="feature-title">100% Private & Safe</h3>
+          <p class="feature-desc">Zero telemetry, zero bloat, and zero hardcoded secrets. All processing happens 100% locally on your machine.</p>
         </div>
       </div>
     </section>
