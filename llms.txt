@@ -9,7 +9,7 @@ anifetch is an open-source CLI utility designed to query AniList's public GraphQ
 - Live Website: https://liyfez.github.io/Anifetch/
 - npm Package: https://www.npmjs.com/package/@l1e/anifetch
 - Author: Liyfez (@l1e)
-- License: MIT
+- License: GNU General Public License v3.0 (GPL-3.0)
 - Runtime: Node.js >= 18 (Zero external runtime dependencies)
 
 ## Key Capabilities & Features

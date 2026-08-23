@@ -8,7 +8,7 @@
 
 [![Website](https://img.shields.io/badge/Website-liyfez.github.io%2FAnifetch-ff69b4?style=flat-square&logo=google-chrome&logoColor=white)](https://liyfez.github.io/Anifetch/)
 [![npm version](https://img.shields.io/npm/v/@l1e/anifetch.svg?color=ff69b4&style=flat-square)](https://www.npmjs.com/package/@l1e/anifetch)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg?style=flat-square)](LICENSE)
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg?style=flat-square)](https://nodejs.org)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](#)
 
@@ -202,6 +202,10 @@ npm test
 
 ---
 
-## 📄 License
+## 📄 License & Credits
 
-MIT © [Liyfez](https://github.com/Liyfez)
+**anifetch** is released under the **[GNU General Public License v3.0 (GPL-3.0)](LICENSE)**.
+
+Copyright © 2026 **[Liyfez](https://github.com/Liyfez)** (`@l1e`). All original architecture, parsing engines, analytics algorithms, and exporter implementations are created by and credited to Liyfez.
+
+Under GPL-3.0, you are free to inspect, run, modify, and contribute to this project. Any derivative works or distributions must remain 100% open source under the exact same GPL-3.0 terms with complete credit and attribution to the original author.

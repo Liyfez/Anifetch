@@ -36,7 +36,7 @@
     "zero-dependencies"
   ],
   "author": "Liyfez",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "engines": {
     "node": ">=18.0.0"
   },
