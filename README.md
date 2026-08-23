@@ -25,19 +25,19 @@
 Run directly with `npx`:
 
 ```bash
-npx anifetch <username>
+npx @l1e/anifetch <username>
 ```
 
 Or launch interactive mode (just open the tool!):
 
 ```bash
-npx anifetch
+npx @l1e/anifetch
 ```
 
 Or install globally:
 
 ```bash
-npm install -g anifetch
+npm install -g @l1e/anifetch
 ```
 
 ---
