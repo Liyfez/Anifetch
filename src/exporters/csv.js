@@ -4,10 +4,22 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+export function sanitizeFilename(name) {
+  return String(name || "user")
+    .replace(/[^a-zA-Z0-9_\-\.]/g, "_")
+    .replace(/_+/g, "_");
+}
+
 function escapeCsv(val) {
   if (val === null || val === undefined) return "";
-  const str = String(val);
-  if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+  let str = String(val);
+
+  // Prevent CSV Formula Injection in Excel/Google Sheets
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = `'${str}`;
+  }
+
+  if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r") || str.includes(";")) {
     return `"${str.replace(/"/g, '""')}"`;
   }
   return str;
@@ -16,6 +28,7 @@ function escapeCsv(val) {
 export async function exportCsv(parsedData, analysisData, outputDir, username) {
   await fs.mkdir(outputDir, { recursive: true });
 
+  const safeUsername = sanitizeFilename(username);
   const generatedFiles = [];
 
   // 1. Anime List CSV
@@ -70,7 +83,7 @@ export async function exportCsv(parsedData, analysisData, outputDir, username) {
     animeRows.push(row.join(","));
   }
 
-  const animeCsvPath = path.join(outputDir, `${username}_anime_list.csv`);
+  const animeCsvPath = path.join(outputDir, `${safeUsername}_anime_list.csv`);
   await fs.writeFile(animeCsvPath, animeRows.join("\n"), "utf-8");
   generatedFiles.push(animeCsvPath);
 
@@ -95,7 +108,7 @@ export async function exportCsv(parsedData, analysisData, outputDir, username) {
       ].join(","));
     }
 
-    const genreCsvPath = path.join(outputDir, `${username}_genre_breakdown.csv`);
+    const genreCsvPath = path.join(outputDir, `${safeUsername}_genre_breakdown.csv`);
     await fs.writeFile(genreCsvPath, genreRows.join("\n"), "utf-8");
     generatedFiles.push(genreCsvPath);
   }
@@ -119,7 +132,7 @@ export async function exportCsv(parsedData, analysisData, outputDir, username) {
       ].join(","));
     }
 
-    const studioCsvPath = path.join(outputDir, `${username}_studio_breakdown.csv`);
+    const studioCsvPath = path.join(outputDir, `${safeUsername}_studio_breakdown.csv`);
     await fs.writeFile(studioCsvPath, studioRows.join("\n"), "utf-8");
     generatedFiles.push(studioCsvPath);
   }

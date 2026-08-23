@@ -210,7 +210,13 @@ export function parseAniListCollection(rawCollection, filterOptions = {}) {
 
   if (filterOptions.minScore !== undefined && filterOptions.minScore !== null) {
     const minS = Number(filterOptions.minScore);
-    allItems = allItems.filter(item => item.my_rating.raw >= minS);
+    if (!isNaN(minS)) {
+      if (minS <= 10 && minS > 0) {
+        allItems = allItems.filter(item => item.my_rating.is_rated && item.my_rating.scale_10 >= minS);
+      } else {
+        allItems = allItems.filter(item => item.my_rating.is_rated && item.my_rating.raw >= minS);
+      }
+    }
   }
 
   if (filterOptions.genre) {

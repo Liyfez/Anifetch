@@ -10,7 +10,7 @@ import os from "node:os";
 import { parseAniListCollection, formatDate, getDecade } from "../src/parser.js";
 import { AniListAnalyzer } from "../src/analyzer.js";
 import { exportJson } from "../src/exporters/json.js";
-import { exportCsv } from "../src/exporters/csv.js";
+import { exportCsv, sanitizeFilename } from "../src/exporters/csv.js";
 import { exportTxt } from "../src/exporters/txt.js";
 import { exportMarkdown } from "../src/exporters/markdown.js";
 import { anifetch, MOCK_DEMO_COLLECTION } from "../src/index.js";
@@ -61,7 +61,7 @@ const mockRawData = {
           repeat: 0,
           media: {
             id: 102,
-            title: { userPreferred: "Generic Fantasy" },
+            title: { userPreferred: "=SUM(1+1) Danger Title" },
             format: "TV",
             episodes: 12,
             duration: 24,
@@ -86,7 +86,7 @@ const mockRawData = {
           repeat: 0,
           media: {
             id: 103,
-            title: { userPreferred: "Bad Show" },
+            title: { userPreferred: "+Tic Elder Sister" },
             format: "TV",
             episodes: 24,
             duration: 24,
@@ -134,10 +134,20 @@ describe("anifetch parser tests", () => {
     assert.equal(parsed.all_anime.every(i => i.status === "completed"), true);
   });
 
-  test("minScore filtering in parser", () => {
-    const parsed = parseAniListCollection(mockRawData, { minScore: 90 });
-    assert.equal(parsed.total_anime_count, 1);
-    assert.equal(parsed.all_anime[0].title.user_preferred, "Steins;Gate");
+  test("minScore filtering on both 10-point and 100-point scales", () => {
+    // 100-point scale check (minScore = 90)
+    const parsed100 = parseAniListCollection(mockRawData, { minScore: 90 });
+    assert.equal(parsed100.total_anime_count, 1);
+    assert.equal(parsed100.all_anime[0].title.user_preferred, "Steins;Gate");
+
+    // 10-point scale check (minScore = 8, meaning 80/100)
+    const parsed10 = parseAniListCollection(mockRawData, { minScore: 8 });
+    assert.equal(parsed10.total_anime_count, 1);
+    assert.equal(parsed10.all_anime[0].title.user_preferred, "Steins;Gate");
+
+    // 10-point scale check (minScore = 5.5, meaning 55/100)
+    const parsedMid = parseAniListCollection(mockRawData, { minScore: 5.5 });
+    assert.equal(parsedMid.total_anime_count, 2);
   });
 });
 
@@ -148,7 +158,6 @@ describe("anifetch analyzer tests", () => {
     const analysis = analyzer.analyze();
 
     assert.equal(analysis.consumption_overview.total_anime, 3);
-    // 24 * (1+1) + 12 + 3 = 63 episodes
     assert.equal(analysis.consumption_overview.total_episodes_watched, 63);
 
     const r = analysis.rating_statistics;
@@ -169,8 +178,14 @@ describe("anifetch analyzer tests", () => {
   });
 });
 
-describe("anifetch exporters tests", () => {
-  test("exports all formats (JSON, CSV, TXT, MD) to disk", async () => {
+describe("anifetch exporters & security tests", () => {
+  test("filename sanitization", () => {
+    assert.equal(sanitizeFilename("user/with:invalid*chars?"), "user_with_invalid_chars_");
+    assert.equal(sanitizeFilename("AnimeEnthusiast (Demo)"), "AnimeEnthusiast_Demo_");
+    assert.equal(sanitizeFilename("simple_user"), "simple_user");
+  });
+
+  test("exports all formats with CSV injection protection", async () => {
     const parsed = parseAniListCollection(mockRawData);
     const analyzer = new AniListAnalyzer(parsed);
     const analysis = analyzer.analyze();
@@ -178,15 +193,19 @@ describe("anifetch exporters tests", () => {
     const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "anifetch-test-"));
 
     try {
-      const jsonFiles = await exportJson(parsed, analysis, tmpDir, "testuser");
-      const csvFiles = await exportCsv(parsed, analysis, tmpDir, "testuser");
-      const txtFiles = await exportTxt(parsed, analysis, tmpDir, "testuser");
-      const mdFiles = await exportMarkdown(parsed, analysis, tmpDir, "testuser");
+      const jsonFiles = await exportJson(parsed, analysis, tmpDir, "test user (1)");
+      const csvFiles = await exportCsv(parsed, analysis, tmpDir, "test user (1)");
+      const txtFiles = await exportTxt(parsed, analysis, tmpDir, "test user (1)");
+      const mdFiles = await exportMarkdown(parsed, analysis, tmpDir, "test user (1)");
 
       assert.equal(jsonFiles.length, 2);
       assert.equal(csvFiles.length, 3);
       assert.equal(txtFiles.length, 1);
       assert.equal(mdFiles.length, 1);
+
+      // Verify CSV formula injection prevention
+      const csvContent = await fs.readFile(csvFiles[0], "utf-8");
+      assert.ok(csvContent.includes("''=SUM(1+1) Danger Title") || csvContent.includes("'+Tic Elder Sister"));
 
       for (const file of [...jsonFiles, ...csvFiles, ...txtFiles, ...mdFiles]) {
         const stat = await fs.stat(file);
@@ -199,12 +218,22 @@ describe("anifetch exporters tests", () => {
 });
 
 describe("anifetch demo & library integration", () => {
-  test("anifetch runs with demo flag", async () => {
-    const res = await anifetch("demo", { demo: true });
-    assert.ok(res.parsed);
-    assert.ok(res.analysis);
-    assert.equal(res.parsed.user.name, "AnimeEnthusiast");
-    assert.equal(res.analysis.consumption_overview.total_anime, 12);
+  test("anifetch runs with demo flag and space-separated formats", async () => {
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "anifetch-test-demo-"));
+    try {
+      const res = await anifetch("demo", {
+        demo: true,
+        format: "json csv md",
+        outputDir: tmpDir
+      });
+      assert.ok(res.parsed);
+      assert.ok(res.analysis);
+      assert.equal(res.parsed.user.name, "AnimeEnthusiast");
+      assert.equal(res.analysis.consumption_overview.total_anime, 12);
+      assert.ok(res.exportedFiles.length >= 5);
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
   });
 
   test("anifetch throws when username is missing", async () => {

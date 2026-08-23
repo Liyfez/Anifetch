@@ -11,7 +11,12 @@ import { printBanner, printPinkHelp, printExportSummary, c } from "../src/ui.js"
 
 const VERSION = "1.0.0";
 
-function parseCliArgs(args) {
+// Handle stdout broken pipe gracefully (e.g. anifetch l1e --json-stdout | head -n 10)
+process.stdout.on("error", (err) => {
+  if (err.code === "EPIPE") process.exit(0);
+});
+
+function parseCliArgs(rawArgs) {
   const options = {
     username: null,
     status: "all",
@@ -30,6 +35,20 @@ function parseCliArgs(args) {
     interactive: false
   };
 
+  // Normalize --key=val to separate tokens
+  const args = [];
+  for (const raw of rawArgs) {
+    if (raw.startsWith("--") && raw.includes("=")) {
+      const idx = raw.indexOf("=");
+      args.push(raw.slice(0, idx), raw.slice(idx + 1));
+    } else if (raw.startsWith("-") && raw.length > 2 && raw.includes("=") && !raw.startsWith("--")) {
+      const idx = raw.indexOf("=");
+      args.push(raw.slice(0, idx), raw.slice(idx + 1));
+    } else {
+      args.push(raw);
+    }
+  }
+
   const positional = [];
   const selectedFormats = new Set();
   const selectedStatuses = new Set();
@@ -37,7 +56,7 @@ function parseCliArgs(args) {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg === "-h" || arg === "--help" || arg === "-help" || arg === "help") {
+    if (arg === "-h" || arg === "--help" || arg === "-help" || arg === "help" || arg === "/?" || arg === "/h" || arg === "/help") {
       options.help = true;
     } else if (arg === "-v" || arg === "--version" || arg === "-version") {
       options.version = true;
@@ -97,7 +116,7 @@ function parseCliArgs(args) {
       selectedFormats.add("md");
     }
     // Positional argument
-    else if (!arg.startsWith("-")) {
+    else if (!arg.startsWith("-") && !arg.startsWith("/")) {
       positional.push(arg);
     }
   }
@@ -182,8 +201,16 @@ async function runInteractiveMode() {
 
         const lower = inputStr.toLowerCase();
 
+        // Clear screen support
+        if (lower === "clear" || lower === "cls") {
+          console.clear();
+          printBanner();
+          console.log(`${c.sakura("For help and CLI options, run:")} ${c.hotPink("anifetch --help")}\n`);
+          continue;
+        }
+
         // Check if user entered help command
-        if (["help", "--help", "-h", "-help", "anifetch help", "anifetch --help", "anifetch -h", "anifetch -help"].includes(lower)) {
+        if (["help", "--help", "-h", "-help", "anifetch help", "anifetch --help", "anifetch -h", "anifetch -help", "/?", "/h", "/help"].includes(lower)) {
           printPinkHelp(VERSION);
           continue;
         }

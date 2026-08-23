@@ -50,7 +50,10 @@ export async function anifetch(username, options = {}) {
   if (options.outputDir) {
     const formats = Array.isArray(options.format)
       ? options.format
-      : (options.format || "json").split(",").map(f => f.trim().toLowerCase());
+      : String(options.format || "json")
+          .split(/[,\s]+/)
+          .map(f => f.trim().toLowerCase())
+          .filter(Boolean);
 
     const isAll = formats.includes("all");
     const safeUser = isDemo ? "demo_user" : username;

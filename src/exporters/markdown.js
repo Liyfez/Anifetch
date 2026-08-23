@@ -1,12 +1,11 @@
-/**
- * Markdown Report Exporter for AniList data and deep analysis.
- */
 import fs from "node:fs/promises";
 import path from "node:path";
+import { sanitizeFilename } from "./csv.js";
 
 export async function exportMarkdown(parsedData, analysisData, outputDir, username) {
   await fs.mkdir(outputDir, { recursive: true });
 
+  const safeUsername = sanitizeFilename(username);
   const c = analysisData?.consumption_overview || {};
   const r = analysisData?.rating_statistics || {};
   const div = analysisData?.community_divergence || {};
@@ -140,7 +139,7 @@ export async function exportMarkdown(parsedData, analysisData, outputDir, userna
     }
   }
 
-  const mdPath = path.join(outputDir, `${username}_analysis_report.md`);
+  const mdPath = path.join(outputDir, `${safeUsername}_analysis_report.md`);
   await fs.writeFile(mdPath, md.join("\n"), "utf-8");
 
   return [mdPath];
