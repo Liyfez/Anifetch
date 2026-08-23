@@ -27,6 +27,29 @@
       --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
+    /* Transparent Pink Selection Highlight */
+    ::selection {
+      background: rgba(244, 114, 182, 0.35);
+      color: #FFFFFF;
+    }
+    ::-moz-selection {
+      background: rgba(244, 114, 182, 0.35);
+      color: #FFFFFF;
+    }
+
+    /* Hide Scrollbar across all browsers */
+    html, body {
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+      width: 0px;
+      height: 0px;
+      background: transparent;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background-color: var(--bg-main);
@@ -368,26 +391,67 @@
       padding: 30px;
       margin-bottom: 80px;
     }
+    .cmd-group-title {
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      color: var(--accent-rose);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 24px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .cmd-group-title:first-child {
+      margin-top: 0;
+    }
     .cmd-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-soft);
+      padding: 10px 14px;
+      border-radius: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
       flex-wrap: wrap;
       gap: 12px;
+      transition: background 0.15s ease;
     }
-    .cmd-item:last-child {
-      border-bottom: none;
+    .cmd-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .cmd-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     .cmd-code {
       font-family: var(--font-mono);
       color: var(--accent-sakura);
       font-size: 0.92rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
     .cmd-desc {
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
+    }
+    .cmd-copy-btn {
+      background: rgba(244, 114, 182, 0.1);
+      border: 1px solid rgba(244, 114, 182, 0.2);
+      color: var(--accent-sakura);
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+    }
+    .cmd-copy-btn:hover {
+      background: rgba(244, 114, 182, 0.25);
+      border-color: var(--accent-rose);
+      color: #fff;
     }
 
     /* Footer */
@@ -588,36 +652,222 @@
     <!-- Commands Cheat Sheet -->
     <section id="commands">
       <h2 class="section-title">CLI Commands Cheat Sheet</h2>
-      <p class="section-sub">Quick copy-paste commands for everyday use.</p>
+      <p class="section-sub">Quick copy-paste reference for all CLI switches, filters, formats, and advanced flags.</p>
 
       <div class="cheatsheet">
+        <!-- Group 1 -->
+        <div class="cmd-group-title">// 1. Quick Starts & Execution</div>
         <div class="cmd-item">
-          <div class="cmd-code">anifetch &lt;username&gt;</div>
-          <div class="cmd-desc">Fetch full profile and export to JSON</div>
+          <div class="cmd-left">
+            <code class="cmd-code">npx anifetch &lt;username&gt;</code>
+            <span class="cmd-desc">Run immediately via npx without local installation</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('npx anifetch l1e', this)">Copy</button>
         </div>
         <div class="cmd-item">
-          <div class="cmd-code">anifetch &lt;username&gt; --completed --json</div>
-          <div class="cmd-desc">Export only completed anime to JSON</div>
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch</code>
+            <span class="cmd-desc">Launch interactive prompt wizard with ESC back-navigation</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch', this)">Copy</button>
         </div>
         <div class="cmd-item">
-          <div class="cmd-code">anifetch &lt;username&gt; --all --csv</div>
-          <div class="cmd-desc">Export entire anime list to CSV spreadsheet</div>
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt;</code>
+            <span class="cmd-desc">Default full fetch and structured JSON export</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e', this)">Copy</button>
         </div>
         <div class="cmd-item">
-          <div class="cmd-code">anifetch &lt;username&gt; --dropped --txt</div>
-          <div class="cmd-desc">Export dropped anime to plain-text report</div>
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch fetch &lt;username&gt;</code>
+            <span class="cmd-desc">Explicit fetch subcommand</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch fetch l1e', this)">Copy</button>
         </div>
         <div class="cmd-item">
-          <div class="cmd-code">anifetch &lt;username&gt; -f all</div>
-          <div class="cmd-desc">Export to all 4 formats (JSON, CSV, TXT, MD)</div>
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch --demo</code>
+            <span class="cmd-desc">Test extraction with sample offline profile (no internet required)</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch --demo', this)">Copy</button>
+        </div>
+
+        <!-- Group 2 -->
+        <div class="cmd-group-title">// 2. Multi-Format Exports</div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; -f all</code>
+            <span class="cmd-desc">Export to all 4 formats (JSON, CSV, TXT, MD) simultaneously</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e -f all', this)">Copy</button>
         </div>
         <div class="cmd-item">
-          <div class="cmd-code">anifetch &lt;username&gt; --min-score 85</div>
-          <div class="cmd-desc">Filter anime by minimum score (85+ or 8.5+)</div>
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --all --csv</code>
+            <span class="cmd-desc">Export entire collection to CSV spreadsheet (Excel / Sheets)</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --all --csv', this)">Copy</button>
         </div>
         <div class="cmd-item">
-          <div class="cmd-code">anifetch --demo</div>
-          <div class="cmd-desc">Test extraction with sample offline profile</div>
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --json</code>
+            <span class="cmd-desc">Export profile list and deep analytics to JSON files</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --json', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --dropped --txt</code>
+            <span class="cmd-desc">Export dropped anime to a formatted plain-text summary</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --dropped --txt', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --completed --md</code>
+            <span class="cmd-desc">Export completed anime to a rich GitHub Markdown report</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --completed --md', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; -f "json csv md"</code>
+            <span class="cmd-desc">Select custom combination of formats</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e -f &quot;json csv md&quot;', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; -o ./my-anime-data</code>
+            <span class="cmd-desc">Specify custom output destination folder</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e -o ./my-anime-data', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --no-export</code>
+            <span class="cmd-desc">Fetch and analyze profile without saving files to disk</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --no-export', this)">Copy</button>
+        </div>
+
+        <!-- Group 3 -->
+        <div class="cmd-group-title">// 3. Filtering & List Selection</div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --completed</code>
+            <span class="cmd-desc">Filter by completed status only</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --completed', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --watching</code>
+            <span class="cmd-desc">Filter by currently watching status</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --watching', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --dropped</code>
+            <span class="cmd-desc">Filter by dropped status</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --dropped', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --paused</code>
+            <span class="cmd-desc">Filter by paused status</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --paused', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --planning</code>
+            <span class="cmd-desc">Filter by planning / watchlist status</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --planning', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; -s "completed,watching"</code>
+            <span class="cmd-desc">Filter by multiple comma-separated statuses</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e -s &quot;completed,watching&quot;', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --min-score 85</code>
+            <span class="cmd-desc">Filter by rating on 100-point scale (85+)</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --min-score 85', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --min-score 8.5</code>
+            <span class="cmd-desc">Filter by rating on 10-point scale (8.5+)</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --min-score 8.5', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --genre "Sci-Fi"</code>
+            <span class="cmd-desc">Filter anime by specific genre name</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --genre &quot;Sci-Fi&quot;', this)">Copy</button>
+        </div>
+
+        <!-- Group 4 -->
+        <div class="cmd-group-title">// 4. Sorting & Pipeline Utilities</div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --sort score --order desc</code>
+            <span class="cmd-desc">Sort collection by highest personal score</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --sort score --order desc', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --sort title --order asc</code>
+            <span class="cmd-desc">Sort alphabetically from A to Z</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --sort title --order asc', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --sort episodes</code>
+            <span class="cmd-desc">Sort by total episode count</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --sort episodes', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; --json-stdout | jq .</code>
+            <span class="cmd-desc">Stream pure JSON to stdout (disables banner and logs)</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e --json-stdout | jq .', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch &lt;username&gt; -q</code>
+            <span class="cmd-desc">Quiet mode (suppress terminal banner and status messages)</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch l1e -q', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch --help</code>
+            <span class="cmd-desc">Display complete CLI guide, options, and flag aliases</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch --help', this)">Copy</button>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-left">
+            <code class="cmd-code">anifetch --version</code>
+            <span class="cmd-desc">Display installed version number</span>
+          </div>
+          <button class="cmd-copy-btn" onclick="copySnippet('anifetch --version', this)">Copy</button>
         </div>
       </div>
     </section>
@@ -700,7 +950,26 @@
       const btn = document.querySelector('.copy-btn');
       const old = btn.innerText;
       btn.innerText = 'Copied!';
-      setTimeout(() => btn.innerText = old, 2000);
+      btn.style.background = 'rgba(244, 114, 182, 0.35)';
+      btn.style.color = '#fff';
+      setTimeout(() => {
+        btn.innerText = old;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2000);
+    }
+
+    function copySnippet(text, btn) {
+      navigator.clipboard.writeText(text);
+      const old = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.background = 'rgba(244, 114, 182, 0.4)';
+      btn.style.color = '#fff';
+      setTimeout(() => {
+        btn.innerText = old;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2000);
     }
 
     // Initialize
